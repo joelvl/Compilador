@@ -1,5 +1,5 @@
-class Hello {     
-    void main() {           
-        Print("Hello world\n");     
+class Hello {
+    void main() {
+        Print("Hello world\n");
     }
 }

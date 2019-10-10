@@ -1,126 +1,212 @@
 Terminals unused in grammar
 
-   VOID
-   INT
-   DOUBLE
-   BOOL
-   STRING
-   CLASS
-   INTERFACE
-   _NULL
-   THIS
-   EXTENDS
-   IMPLEMENTS
-   FOR
-   WHILE
-   IF
-   ELSE
-   RETURN
-   BREAK
-   NEW
-   NEWARRAY
-   PRINT
-   READINTEGER
-   READLINE
-   _TRUE
-   _FALSE
-   INT_VALUE
-   DOUBLE_VALUE
    CHAR_VALUE
-   STRING_VALUE
-   IDENTIFIER
-   MINUS
-   MUL
-   DIV
-   MOD
-   LESS
-   LESSEQUAL
-   GREATER
-   GREATEREQUAL
-   EQUALEQUAL
-   EQUAL
-   NOTEQUAL
-   AND
-   OR
-   NOT
-   SEMICOLON
-   COMMA
-   DOT
-   SBO
-   SBC
-   BO
-   BC
-   CBO
-   CBC
+
+
+State 122 conflicts: 15 shift/reduce
+State 123 conflicts: 15 shift/reduce
+State 161 conflicts: 15 shift/reduce
+State 162 conflicts: 15 shift/reduce
+State 163 conflicts: 15 shift/reduce
+State 164 conflicts: 15 shift/reduce
+State 165 conflicts: 15 shift/reduce
+State 166 conflicts: 15 shift/reduce
+State 167 conflicts: 15 shift/reduce
+State 168 conflicts: 15 shift/reduce
+State 169 conflicts: 15 shift/reduce
+State 170 conflicts: 15 shift/reduce
+State 171 conflicts: 15 shift/reduce
+State 172 conflicts: 15 shift/reduce
+State 173 conflicts: 15 shift/reduce
+State 176 conflicts: 15 shift/reduce
 
 
 Grammar
 
     0 $accept: program $end
 
-    1 program: stmts
+    1 program: decls
 
-    2 stmts: PLUS
-    3      | PLUS stmts
+    2 decls: decl
+    3      | decl decls
+
+    4 decl: variableDecl
+    5     | functionDecl
+    6     | classDecl
+    7     | interfaceDecl
+
+    8 variableDecl: variable SEMICOLON
+
+    9 variable: type IDENTIFIER
+
+   10 type: INT
+   11     | DOUBLE
+   12     | BOOL
+   13     | STRING
+   14     | IDENTIFIER
+   15     | type SBO SBC
+
+   16 identifiers: IDENTIFIER IDENTIFIER
+   17            | IDENTIFIER identifiers
+
+   18 functionDecl: type IDENTIFIER BO formals BC stmtBlock
+   19             | VOID IDENTIFIER BO formals BC stmtBlock
+
+   20 formals: variable
+   21        | variable COMMA formals
+
+   22 classDecl: CLASS IDENTIFIER EXTENDS IDENTIFIER IMPLEMENTS identifiers CBO fields CBC
+   23          | CLASS IDENTIFIER IMPLEMENTS identifiers CBO fields CBC
+   24          | CLASS IDENTIFIER EXTENDS IDENTIFIER CBO fields CBC
+   25          | CLASS IDENTIFIER CBO fields CBC
+
+   26 fields: %empty
+   27       | field fields
+
+   28 field: variableDecl
+   29      | functionDecl
+
+   30 interfaceDecl: INTERFACE IDENTIFIER CBO prototype CBC
+
+   31 prototype: %empty
+   32          | type IDENTIFIER BO formals BC SEMICOLON
+   33          | VOID IDENTIFIER BO formals BC SEMICOLON
+
+   34 stmtBlock: CBO variableDecl stmts CBC
+
+   35 stmts: %empty
+   36      | stmt stmts
+
+   37 stmt: expression SEMICOLON
+   38     | ifStmt
+   39     | whileStmt
+   40     | forStmt
+   41     | breakStmt
+   42     | returnStmt
+   43     | printStmt
+   44     | stmtBlock
+
+   45 ifStmt: IF BO expression BC stmtBlock
+   46       | IF BO expression BC stmtBlock ELSE stmtBlock
+
+   47 whileStmt: WHILE BO expression BC stmtBlock
+
+   48 forStmt: FOR BO expression SEMICOLON expression SEMICOLON expression BC stmtBlock
+
+   49 returnStmt: RETURN expression SEMICOLON
+
+   50 breakStmt: BREAK
+
+   51 printStmt: PRINT BO expressionList BC SEMICOLON
+
+   52 expressionList: expression
+   53               | expressionList COMMA expression
+
+   54 expression: lValue EQUAL expression
+   55           | constant
+   56           | lValue
+   57           | THIS
+   58           | call
+   59           | BO expression BC
+   60           | expression PLUS expression
+   61           | expression MINUS expression
+   62           | expression MUL expression
+   63           | expression DIV expression
+   64           | expression MOD expression
+   65           | MINUS expression
+   66           | expression LESS expression
+   67           | expression LESSEQUAL expression
+   68           | expression GREATER expression
+   69           | expression GREATEREQUAL expression
+   70           | expression EQUALEQUAL expression
+   71           | expression NOTEQUAL expression
+   72           | expression AND expression
+   73           | expression OR expression
+   74           | NOT expression
+   75           | READINTEGER BO BC
+   76           | READLINE BO BC
+   77           | NEW BO IDENTIFIER BC
+   78           | NEWARRAY BO expression COMMA expression BC
+
+   79 lValue: IDENTIFIER
+   80       | expression DOT IDENTIFIER
+   81       | expression SBO expression SBC
+
+   82 call: IDENTIFIER BO actuals BC
+   83     | expression DOT IDENTIFIER BO actualList BC
+
+   84 actualList: actuals
+   85           | %empty
+
+   86 actuals: expression
+   87        | actuals COMMA expression
+
+   88 constant: INT_VALUE
+   89         | DOUBLE_VALUE
+   90         | _TRUE
+   91         | _FALSE
+   92         | STRING_VALUE
+   93         | _NULL
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-VOID (258)
-INT (259)
-DOUBLE (260)
-BOOL (261)
-STRING (262)
-CLASS (263)
-INTERFACE (264)
-_NULL (265)
-THIS (266)
-EXTENDS (267)
-IMPLEMENTS (268)
-FOR (269)
-WHILE (270)
-IF (271)
-ELSE (272)
-RETURN (273)
-BREAK (274)
-NEW (275)
-NEWARRAY (276)
-PRINT (277)
-READINTEGER (278)
-READLINE (279)
-_TRUE (280)
-_FALSE (281)
-INT_VALUE <ival> (282)
-DOUBLE_VALUE <dval> (283)
-CHAR_VALUE <cval> (284)
-STRING_VALUE <sval> (285)
-IDENTIFIER <sval> (286)
-PLUS (287) 2 3
-MINUS (288)
-MUL (289)
-DIV (290)
-MOD (291)
-LESS (292)
-LESSEQUAL (293)
-GREATER (294)
-GREATEREQUAL (295)
-EQUALEQUAL (296)
-EQUAL (297)
-NOTEQUAL (298)
-AND (299)
-OR (300)
-NOT (301)
-SEMICOLON (302)
-COMMA (303)
-DOT (304)
-SBO (305)
-SBC (306)
-BO (307)
-BC (308)
-CBO (309)
-CBC (310)
+VOID (258) 19 33
+INT (259) 10
+DOUBLE (260) 11
+BOOL (261) 12
+STRING (262) 13
+CLASS (263) 22 23 24 25
+INTERFACE (264) 30
+_NULL (265) 93
+THIS (266) 57
+EXTENDS (267) 22 24
+IMPLEMENTS (268) 22 23
+FOR (269) 48
+WHILE (270) 47
+IF (271) 45 46
+ELSE (272) 46
+RETURN (273) 49
+BREAK (274) 50
+NEW (275) 77
+NEWARRAY (276) 78
+PRINT (277) 51
+READINTEGER (278) 75
+READLINE (279) 76
+_TRUE (280) 90
+_FALSE (281) 91
+PLUS (282) 60
+MINUS (283) 61 65
+MUL (284) 62
+DIV (285) 63
+MOD (286) 64
+LESS (287) 66
+LESSEQUAL (288) 67
+GREATER (289) 68
+GREATEREQUAL (290) 69
+EQUALEQUAL (291) 70
+EQUAL (292) 54
+NOTEQUAL (293) 71
+AND (294) 72
+OR (295) 73
+NOT (296) 74
+SEMICOLON (297) 8 32 33 37 48 49 51
+COMMA (298) 21 53 78 87
+DOT (299) 80 83
+SBO (300) 15 81
+SBC (301) 15 81
+BO (302) 18 19 32 33 45 46 47 48 51 59 75 76 77 78 82 83
+BC (303) 18 19 32 33 45 46 47 48 51 59 75 76 77 78 82 83
+CBO (304) 22 23 24 25 30 34
+CBC (305) 22 23 24 25 30 34
+INT_VALUE <ival> (306) 88
+DOUBLE_VALUE <dval> (307) 89
+CHAR_VALUE <cval> (308)
+STRING_VALUE <sval> (309) 92
+IDENTIFIER <sval> (310) 9 14 16 17 18 19 22 23 24 25 30 32 33 77 79
+    80 82 83
 
 
 Nonterminals, with rules where they appear
@@ -129,55 +215,3625 @@ $accept (56)
     on left: 0
 program (57)
     on left: 1, on right: 0
-stmts (58)
+decls (58)
     on left: 2 3, on right: 1 3
+decl (59)
+    on left: 4 5 6 7, on right: 2 3
+variableDecl (60)
+    on left: 8, on right: 4 28 34
+variable (61)
+    on left: 9, on right: 8 20 21
+type (62)
+    on left: 10 11 12 13 14 15, on right: 9 15 18 32
+identifiers (63)
+    on left: 16 17, on right: 17 22 23
+functionDecl (64)
+    on left: 18 19, on right: 5 29
+formals (65)
+    on left: 20 21, on right: 18 19 21 32 33
+classDecl (66)
+    on left: 22 23 24 25, on right: 6
+fields (67)
+    on left: 26 27, on right: 22 23 24 25 27
+field (68)
+    on left: 28 29, on right: 27
+interfaceDecl (69)
+    on left: 30, on right: 7
+prototype (70)
+    on left: 31 32 33, on right: 30
+stmtBlock (71)
+    on left: 34, on right: 18 19 44 45 46 47 48
+stmts (72)
+    on left: 35 36, on right: 34 36
+stmt (73)
+    on left: 37 38 39 40 41 42 43 44, on right: 36
+ifStmt (74)
+    on left: 45 46, on right: 38
+whileStmt (75)
+    on left: 47, on right: 39
+forStmt (76)
+    on left: 48, on right: 40
+returnStmt (77)
+    on left: 49, on right: 42
+breakStmt (78)
+    on left: 50, on right: 41
+printStmt (79)
+    on left: 51, on right: 43
+expressionList (80)
+    on left: 52 53, on right: 51 53
+expression (81)
+    on left: 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71
+    72 73 74 75 76 77 78, on right: 37 45 46 47 48 49 52 53 54 59 60
+    61 62 63 64 65 66 67 68 69 70 71 72 73 74 78 80 81 83 86 87
+lValue (82)
+    on left: 79 80 81, on right: 54 56
+call (83)
+    on left: 82 83, on right: 58
+actualList (84)
+    on left: 84 85, on right: 83
+actuals (85)
+    on left: 86 87, on right: 82 84 87
+constant (86)
+    on left: 88 89 90 91 92 93, on right: 55
 
 
 State 0
 
     0 $accept: . program $end
 
-    PLUS  shift, and go to state 1
+    VOID        shift, and go to state 1
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    CLASS       shift, and go to state 6
+    INTERFACE   shift, and go to state 7
+    IDENTIFIER  shift, and go to state 8
 
-    program  go to state 2
-    stmts    go to state 3
+    program        go to state 9
+    decls          go to state 10
+    decl           go to state 11
+    variableDecl   go to state 12
+    variable       go to state 13
+    type           go to state 14
+    functionDecl   go to state 15
+    classDecl      go to state 16
+    interfaceDecl  go to state 17
 
 
 State 1
 
-    2 stmts: PLUS .
-    3      | PLUS . stmts
+   19 functionDecl: VOID . IDENTIFIER BO formals BC stmtBlock
 
-    PLUS  shift, and go to state 1
-
-    $default  reduce using rule 2 (stmts)
-
-    stmts  go to state 4
+    IDENTIFIER  shift, and go to state 18
 
 
 State 2
 
-    0 $accept: program . $end
+   10 type: INT .
 
-    $end  shift, and go to state 5
+    $default  reduce using rule 10 (type)
 
 
 State 3
 
-    1 program: stmts .
+   11 type: DOUBLE .
 
-    $default  reduce using rule 1 (program)
+    $default  reduce using rule 11 (type)
 
 
 State 4
 
-    3 stmts: PLUS stmts .
+   12 type: BOOL .
 
-    $default  reduce using rule 3 (stmts)
+    $default  reduce using rule 12 (type)
 
 
 State 5
 
+   13 type: STRING .
+
+    $default  reduce using rule 13 (type)
+
+
+State 6
+
+   22 classDecl: CLASS . IDENTIFIER EXTENDS IDENTIFIER IMPLEMENTS identifiers CBO fields CBC
+   23          | CLASS . IDENTIFIER IMPLEMENTS identifiers CBO fields CBC
+   24          | CLASS . IDENTIFIER EXTENDS IDENTIFIER CBO fields CBC
+   25          | CLASS . IDENTIFIER CBO fields CBC
+
+    IDENTIFIER  shift, and go to state 19
+
+
+State 7
+
+   30 interfaceDecl: INTERFACE . IDENTIFIER CBO prototype CBC
+
+    IDENTIFIER  shift, and go to state 20
+
+
+State 8
+
+   14 type: IDENTIFIER .
+
+    $default  reduce using rule 14 (type)
+
+
+State 9
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 21
+
+
+State 10
+
+    1 program: decls .
+
+    $default  reduce using rule 1 (program)
+
+
+State 11
+
+    2 decls: decl .
+    3      | decl . decls
+
+    VOID        shift, and go to state 1
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    CLASS       shift, and go to state 6
+    INTERFACE   shift, and go to state 7
+    IDENTIFIER  shift, and go to state 8
+
+    $default  reduce using rule 2 (decls)
+
+    decls          go to state 22
+    decl           go to state 11
+    variableDecl   go to state 12
+    variable       go to state 13
+    type           go to state 14
+    functionDecl   go to state 15
+    classDecl      go to state 16
+    interfaceDecl  go to state 17
+
+
+State 12
+
+    4 decl: variableDecl .
+
+    $default  reduce using rule 4 (decl)
+
+
+State 13
+
+    8 variableDecl: variable . SEMICOLON
+
+    SEMICOLON  shift, and go to state 23
+
+
+State 14
+
+    9 variable: type . IDENTIFIER
+   15 type: type . SBO SBC
+   18 functionDecl: type . IDENTIFIER BO formals BC stmtBlock
+
+    SBO         shift, and go to state 24
+    IDENTIFIER  shift, and go to state 25
+
+
+State 15
+
+    5 decl: functionDecl .
+
+    $default  reduce using rule 5 (decl)
+
+
+State 16
+
+    6 decl: classDecl .
+
+    $default  reduce using rule 6 (decl)
+
+
+State 17
+
+    7 decl: interfaceDecl .
+
+    $default  reduce using rule 7 (decl)
+
+
+State 18
+
+   19 functionDecl: VOID IDENTIFIER . BO formals BC stmtBlock
+
+    BO  shift, and go to state 26
+
+
+State 19
+
+   22 classDecl: CLASS IDENTIFIER . EXTENDS IDENTIFIER IMPLEMENTS identifiers CBO fields CBC
+   23          | CLASS IDENTIFIER . IMPLEMENTS identifiers CBO fields CBC
+   24          | CLASS IDENTIFIER . EXTENDS IDENTIFIER CBO fields CBC
+   25          | CLASS IDENTIFIER . CBO fields CBC
+
+    EXTENDS     shift, and go to state 27
+    IMPLEMENTS  shift, and go to state 28
+    CBO         shift, and go to state 29
+
+
+State 20
+
+   30 interfaceDecl: INTERFACE IDENTIFIER . CBO prototype CBC
+
+    CBO  shift, and go to state 30
+
+
+State 21
+
     0 $accept: program $end .
 
     $default  accept
+
+
+State 22
+
+    3 decls: decl decls .
+
+    $default  reduce using rule 3 (decls)
+
+
+State 23
+
+    8 variableDecl: variable SEMICOLON .
+
+    $default  reduce using rule 8 (variableDecl)
+
+
+State 24
+
+   15 type: type SBO . SBC
+
+    SBC  shift, and go to state 31
+
+
+State 25
+
+    9 variable: type IDENTIFIER .
+   18 functionDecl: type IDENTIFIER . BO formals BC stmtBlock
+
+    BO  shift, and go to state 32
+
+    $default  reduce using rule 9 (variable)
+
+
+State 26
+
+   19 functionDecl: VOID IDENTIFIER BO . formals BC stmtBlock
+
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    variable  go to state 33
+    type      go to state 34
+    formals   go to state 35
+
+
+State 27
+
+   22 classDecl: CLASS IDENTIFIER EXTENDS . IDENTIFIER IMPLEMENTS identifiers CBO fields CBC
+   24          | CLASS IDENTIFIER EXTENDS . IDENTIFIER CBO fields CBC
+
+    IDENTIFIER  shift, and go to state 36
+
+
+State 28
+
+   23 classDecl: CLASS IDENTIFIER IMPLEMENTS . identifiers CBO fields CBC
+
+    IDENTIFIER  shift, and go to state 37
+
+    identifiers  go to state 38
+
+
+State 29
+
+   25 classDecl: CLASS IDENTIFIER CBO . fields CBC
+
+    VOID        shift, and go to state 1
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    $default  reduce using rule 26 (fields)
+
+    variableDecl  go to state 39
+    variable      go to state 13
+    type          go to state 14
+    functionDecl  go to state 40
+    fields        go to state 41
+    field         go to state 42
+
+
+State 30
+
+   30 interfaceDecl: INTERFACE IDENTIFIER CBO . prototype CBC
+
+    VOID        shift, and go to state 43
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    $default  reduce using rule 31 (prototype)
+
+    type       go to state 44
+    prototype  go to state 45
+
+
+State 31
+
+   15 type: type SBO SBC .
+
+    $default  reduce using rule 15 (type)
+
+
+State 32
+
+   18 functionDecl: type IDENTIFIER BO . formals BC stmtBlock
+
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    variable  go to state 33
+    type      go to state 34
+    formals   go to state 46
+
+
+State 33
+
+   20 formals: variable .
+   21        | variable . COMMA formals
+
+    COMMA  shift, and go to state 47
+
+    $default  reduce using rule 20 (formals)
+
+
+State 34
+
+    9 variable: type . IDENTIFIER
+   15 type: type . SBO SBC
+
+    SBO         shift, and go to state 24
+    IDENTIFIER  shift, and go to state 48
+
+
+State 35
+
+   19 functionDecl: VOID IDENTIFIER BO formals . BC stmtBlock
+
+    BC  shift, and go to state 49
+
+
+State 36
+
+   22 classDecl: CLASS IDENTIFIER EXTENDS IDENTIFIER . IMPLEMENTS identifiers CBO fields CBC
+   24          | CLASS IDENTIFIER EXTENDS IDENTIFIER . CBO fields CBC
+
+    IMPLEMENTS  shift, and go to state 50
+    CBO         shift, and go to state 51
+
+
+State 37
+
+   16 identifiers: IDENTIFIER . IDENTIFIER
+   17            | IDENTIFIER . identifiers
+
+    IDENTIFIER  shift, and go to state 52
+
+    identifiers  go to state 53
+
+
+State 38
+
+   23 classDecl: CLASS IDENTIFIER IMPLEMENTS identifiers . CBO fields CBC
+
+    CBO  shift, and go to state 54
+
+
+State 39
+
+   28 field: variableDecl .
+
+    $default  reduce using rule 28 (field)
+
+
+State 40
+
+   29 field: functionDecl .
+
+    $default  reduce using rule 29 (field)
+
+
+State 41
+
+   25 classDecl: CLASS IDENTIFIER CBO fields . CBC
+
+    CBC  shift, and go to state 55
+
+
+State 42
+
+   27 fields: field . fields
+
+    VOID        shift, and go to state 1
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    $default  reduce using rule 26 (fields)
+
+    variableDecl  go to state 39
+    variable      go to state 13
+    type          go to state 14
+    functionDecl  go to state 40
+    fields        go to state 56
+    field         go to state 42
+
+
+State 43
+
+   33 prototype: VOID . IDENTIFIER BO formals BC SEMICOLON
+
+    IDENTIFIER  shift, and go to state 57
+
+
+State 44
+
+   15 type: type . SBO SBC
+   32 prototype: type . IDENTIFIER BO formals BC SEMICOLON
+
+    SBO         shift, and go to state 24
+    IDENTIFIER  shift, and go to state 58
+
+
+State 45
+
+   30 interfaceDecl: INTERFACE IDENTIFIER CBO prototype . CBC
+
+    CBC  shift, and go to state 59
+
+
+State 46
+
+   18 functionDecl: type IDENTIFIER BO formals . BC stmtBlock
+
+    BC  shift, and go to state 60
+
+
+State 47
+
+   21 formals: variable COMMA . formals
+
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    variable  go to state 33
+    type      go to state 34
+    formals   go to state 61
+
+
+State 48
+
+    9 variable: type IDENTIFIER .
+
+    $default  reduce using rule 9 (variable)
+
+
+State 49
+
+   19 functionDecl: VOID IDENTIFIER BO formals BC . stmtBlock
+
+    CBO  shift, and go to state 62
+
+    stmtBlock  go to state 63
+
+
+State 50
+
+   22 classDecl: CLASS IDENTIFIER EXTENDS IDENTIFIER IMPLEMENTS . identifiers CBO fields CBC
+
+    IDENTIFIER  shift, and go to state 37
+
+    identifiers  go to state 64
+
+
+State 51
+
+   24 classDecl: CLASS IDENTIFIER EXTENDS IDENTIFIER CBO . fields CBC
+
+    VOID        shift, and go to state 1
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    $default  reduce using rule 26 (fields)
+
+    variableDecl  go to state 39
+    variable      go to state 13
+    type          go to state 14
+    functionDecl  go to state 40
+    fields        go to state 65
+    field         go to state 42
+
+
+State 52
+
+   16 identifiers: IDENTIFIER . IDENTIFIER
+   16            | IDENTIFIER IDENTIFIER .
+   17            | IDENTIFIER . identifiers
+
+    IDENTIFIER  shift, and go to state 52
+
+    $default  reduce using rule 16 (identifiers)
+
+    identifiers  go to state 53
+
+
+State 53
+
+   17 identifiers: IDENTIFIER identifiers .
+
+    $default  reduce using rule 17 (identifiers)
+
+
+State 54
+
+   23 classDecl: CLASS IDENTIFIER IMPLEMENTS identifiers CBO . fields CBC
+
+    VOID        shift, and go to state 1
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    $default  reduce using rule 26 (fields)
+
+    variableDecl  go to state 39
+    variable      go to state 13
+    type          go to state 14
+    functionDecl  go to state 40
+    fields        go to state 66
+    field         go to state 42
+
+
+State 55
+
+   25 classDecl: CLASS IDENTIFIER CBO fields CBC .
+
+    $default  reduce using rule 25 (classDecl)
+
+
+State 56
+
+   27 fields: field fields .
+
+    $default  reduce using rule 27 (fields)
+
+
+State 57
+
+   33 prototype: VOID IDENTIFIER . BO formals BC SEMICOLON
+
+    BO  shift, and go to state 67
+
+
+State 58
+
+   32 prototype: type IDENTIFIER . BO formals BC SEMICOLON
+
+    BO  shift, and go to state 68
+
+
+State 59
+
+   30 interfaceDecl: INTERFACE IDENTIFIER CBO prototype CBC .
+
+    $default  reduce using rule 30 (interfaceDecl)
+
+
+State 60
+
+   18 functionDecl: type IDENTIFIER BO formals BC . stmtBlock
+
+    CBO  shift, and go to state 62
+
+    stmtBlock  go to state 69
+
+
+State 61
+
+   21 formals: variable COMMA formals .
+
+    $default  reduce using rule 21 (formals)
+
+
+State 62
+
+   34 stmtBlock: CBO . variableDecl stmts CBC
+
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    variableDecl  go to state 70
+    variable      go to state 13
+    type          go to state 34
+
+
+State 63
+
+   19 functionDecl: VOID IDENTIFIER BO formals BC stmtBlock .
+
+    $default  reduce using rule 19 (functionDecl)
+
+
+State 64
+
+   22 classDecl: CLASS IDENTIFIER EXTENDS IDENTIFIER IMPLEMENTS identifiers . CBO fields CBC
+
+    CBO  shift, and go to state 71
+
+
+State 65
+
+   24 classDecl: CLASS IDENTIFIER EXTENDS IDENTIFIER CBO fields . CBC
+
+    CBC  shift, and go to state 72
+
+
+State 66
+
+   23 classDecl: CLASS IDENTIFIER IMPLEMENTS identifiers CBO fields . CBC
+
+    CBC  shift, and go to state 73
+
+
+State 67
+
+   33 prototype: VOID IDENTIFIER BO . formals BC SEMICOLON
+
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    variable  go to state 33
+    type      go to state 34
+    formals   go to state 74
+
+
+State 68
+
+   32 prototype: type IDENTIFIER BO . formals BC SEMICOLON
+
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    variable  go to state 33
+    type      go to state 34
+    formals   go to state 75
+
+
+State 69
+
+   18 functionDecl: type IDENTIFIER BO formals BC stmtBlock .
+
+    $default  reduce using rule 18 (functionDecl)
+
+
+State 70
+
+   34 stmtBlock: CBO variableDecl . stmts CBC
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    FOR           shift, and go to state 78
+    WHILE         shift, and go to state 79
+    IF            shift, and go to state 80
+    RETURN        shift, and go to state 81
+    BREAK         shift, and go to state 82
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    PRINT         shift, and go to state 85
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    CBO           shift, and go to state 62
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    $default  reduce using rule 35 (stmts)
+
+    stmtBlock   go to state 97
+    stmts       go to state 98
+    stmt        go to state 99
+    ifStmt      go to state 100
+    whileStmt   go to state 101
+    forStmt     go to state 102
+    returnStmt  go to state 103
+    breakStmt   go to state 104
+    printStmt   go to state 105
+    expression  go to state 106
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 71
+
+   22 classDecl: CLASS IDENTIFIER EXTENDS IDENTIFIER IMPLEMENTS identifiers CBO . fields CBC
+
+    VOID        shift, and go to state 1
+    INT         shift, and go to state 2
+    DOUBLE      shift, and go to state 3
+    BOOL        shift, and go to state 4
+    STRING      shift, and go to state 5
+    IDENTIFIER  shift, and go to state 8
+
+    $default  reduce using rule 26 (fields)
+
+    variableDecl  go to state 39
+    variable      go to state 13
+    type          go to state 14
+    functionDecl  go to state 40
+    fields        go to state 110
+    field         go to state 42
+
+
+State 72
+
+   24 classDecl: CLASS IDENTIFIER EXTENDS IDENTIFIER CBO fields CBC .
+
+    $default  reduce using rule 24 (classDecl)
+
+
+State 73
+
+   23 classDecl: CLASS IDENTIFIER IMPLEMENTS identifiers CBO fields CBC .
+
+    $default  reduce using rule 23 (classDecl)
+
+
+State 74
+
+   33 prototype: VOID IDENTIFIER BO formals . BC SEMICOLON
+
+    BC  shift, and go to state 111
+
+
+State 75
+
+   32 prototype: type IDENTIFIER BO formals . BC SEMICOLON
+
+    BC  shift, and go to state 112
+
+
+State 76
+
+   93 constant: _NULL .
+
+    $default  reduce using rule 93 (constant)
+
+
+State 77
+
+   57 expression: THIS .
+
+    $default  reduce using rule 57 (expression)
+
+
+State 78
+
+   48 forStmt: FOR . BO expression SEMICOLON expression SEMICOLON expression BC stmtBlock
+
+    BO  shift, and go to state 113
+
+
+State 79
+
+   47 whileStmt: WHILE . BO expression BC stmtBlock
+
+    BO  shift, and go to state 114
+
+
+State 80
+
+   45 ifStmt: IF . BO expression BC stmtBlock
+   46       | IF . BO expression BC stmtBlock ELSE stmtBlock
+
+    BO  shift, and go to state 115
+
+
+State 81
+
+   49 returnStmt: RETURN . expression SEMICOLON
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 116
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 82
+
+   50 breakStmt: BREAK .
+
+    $default  reduce using rule 50 (breakStmt)
+
+
+State 83
+
+   77 expression: NEW . BO IDENTIFIER BC
+
+    BO  shift, and go to state 117
+
+
+State 84
+
+   78 expression: NEWARRAY . BO expression COMMA expression BC
+
+    BO  shift, and go to state 118
+
+
+State 85
+
+   51 printStmt: PRINT . BO expressionList BC SEMICOLON
+
+    BO  shift, and go to state 119
+
+
+State 86
+
+   75 expression: READINTEGER . BO BC
+
+    BO  shift, and go to state 120
+
+
+State 87
+
+   76 expression: READLINE . BO BC
+
+    BO  shift, and go to state 121
+
+
+State 88
+
+   90 constant: _TRUE .
+
+    $default  reduce using rule 90 (constant)
+
+
+State 89
+
+   91 constant: _FALSE .
+
+    $default  reduce using rule 91 (constant)
+
+
+State 90
+
+   65 expression: MINUS . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 122
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 91
+
+   74 expression: NOT . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 123
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 92
+
+   59 expression: BO . expression BC
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 124
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 93
+
+   88 constant: INT_VALUE .
+
+    $default  reduce using rule 88 (constant)
+
+
+State 94
+
+   89 constant: DOUBLE_VALUE .
+
+    $default  reduce using rule 89 (constant)
+
+
+State 95
+
+   92 constant: STRING_VALUE .
+
+    $default  reduce using rule 92 (constant)
+
+
+State 96
+
+   79 lValue: IDENTIFIER .
+   82 call: IDENTIFIER . BO actuals BC
+
+    BO  shift, and go to state 125
+
+    $default  reduce using rule 79 (lValue)
+
+
+State 97
+
+   44 stmt: stmtBlock .
+
+    $default  reduce using rule 44 (stmt)
+
+
+State 98
+
+   34 stmtBlock: CBO variableDecl stmts . CBC
+
+    CBC  shift, and go to state 126
+
+
+State 99
+
+   36 stmts: stmt . stmts
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    FOR           shift, and go to state 78
+    WHILE         shift, and go to state 79
+    IF            shift, and go to state 80
+    RETURN        shift, and go to state 81
+    BREAK         shift, and go to state 82
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    PRINT         shift, and go to state 85
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    CBO           shift, and go to state 62
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    $default  reduce using rule 35 (stmts)
+
+    stmtBlock   go to state 97
+    stmts       go to state 127
+    stmt        go to state 99
+    ifStmt      go to state 100
+    whileStmt   go to state 101
+    forStmt     go to state 102
+    returnStmt  go to state 103
+    breakStmt   go to state 104
+    printStmt   go to state 105
+    expression  go to state 106
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 100
+
+   38 stmt: ifStmt .
+
+    $default  reduce using rule 38 (stmt)
+
+
+State 101
+
+   39 stmt: whileStmt .
+
+    $default  reduce using rule 39 (stmt)
+
+
+State 102
+
+   40 stmt: forStmt .
+
+    $default  reduce using rule 40 (stmt)
+
+
+State 103
+
+   42 stmt: returnStmt .
+
+    $default  reduce using rule 42 (stmt)
+
+
+State 104
+
+   41 stmt: breakStmt .
+
+    $default  reduce using rule 41 (stmt)
+
+
+State 105
+
+   43 stmt: printStmt .
+
+    $default  reduce using rule 43 (stmt)
+
+
+State 106
+
+   37 stmt: expression . SEMICOLON
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    SEMICOLON     shift, and go to state 141
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+
+State 107
+
+   54 expression: lValue . EQUAL expression
+   56           | lValue .
+
+    EQUAL  shift, and go to state 144
+
+    $default  reduce using rule 56 (expression)
+
+
+State 108
+
+   58 expression: call .
+
+    $default  reduce using rule 58 (expression)
+
+
+State 109
+
+   55 expression: constant .
+
+    $default  reduce using rule 55 (expression)
+
+
+State 110
+
+   22 classDecl: CLASS IDENTIFIER EXTENDS IDENTIFIER IMPLEMENTS identifiers CBO fields . CBC
+
+    CBC  shift, and go to state 145
+
+
+State 111
+
+   33 prototype: VOID IDENTIFIER BO formals BC . SEMICOLON
+
+    SEMICOLON  shift, and go to state 146
+
+
+State 112
+
+   32 prototype: type IDENTIFIER BO formals BC . SEMICOLON
+
+    SEMICOLON  shift, and go to state 147
+
+
+State 113
+
+   48 forStmt: FOR BO . expression SEMICOLON expression SEMICOLON expression BC stmtBlock
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 148
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 114
+
+   47 whileStmt: WHILE BO . expression BC stmtBlock
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 149
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 115
+
+   45 ifStmt: IF BO . expression BC stmtBlock
+   46       | IF BO . expression BC stmtBlock ELSE stmtBlock
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 150
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 116
+
+   49 returnStmt: RETURN expression . SEMICOLON
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    SEMICOLON     shift, and go to state 151
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+
+State 117
+
+   77 expression: NEW BO . IDENTIFIER BC
+
+    IDENTIFIER  shift, and go to state 152
+
+
+State 118
+
+   78 expression: NEWARRAY BO . expression COMMA expression BC
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 153
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 119
+
+   51 printStmt: PRINT BO . expressionList BC SEMICOLON
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expressionList  go to state 154
+    expression      go to state 155
+    lValue          go to state 107
+    call            go to state 108
+    constant        go to state 109
+
+
+State 120
+
+   75 expression: READINTEGER BO . BC
+
+    BC  shift, and go to state 156
+
+
+State 121
+
+   76 expression: READLINE BO . BC
+
+    BC  shift, and go to state 157
+
+
+State 122
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   65           | MINUS expression .
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 65 (expression)]
+    MINUS         [reduce using rule 65 (expression)]
+    MUL           [reduce using rule 65 (expression)]
+    DIV           [reduce using rule 65 (expression)]
+    MOD           [reduce using rule 65 (expression)]
+    LESS          [reduce using rule 65 (expression)]
+    LESSEQUAL     [reduce using rule 65 (expression)]
+    GREATER       [reduce using rule 65 (expression)]
+    GREATEREQUAL  [reduce using rule 65 (expression)]
+    EQUALEQUAL    [reduce using rule 65 (expression)]
+    NOTEQUAL      [reduce using rule 65 (expression)]
+    AND           [reduce using rule 65 (expression)]
+    OR            [reduce using rule 65 (expression)]
+    DOT           [reduce using rule 65 (expression)]
+    SBO           [reduce using rule 65 (expression)]
+    $default      reduce using rule 65 (expression)
+
+
+State 123
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   74           | NOT expression .
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 74 (expression)]
+    MINUS         [reduce using rule 74 (expression)]
+    MUL           [reduce using rule 74 (expression)]
+    DIV           [reduce using rule 74 (expression)]
+    MOD           [reduce using rule 74 (expression)]
+    LESS          [reduce using rule 74 (expression)]
+    LESSEQUAL     [reduce using rule 74 (expression)]
+    GREATER       [reduce using rule 74 (expression)]
+    GREATEREQUAL  [reduce using rule 74 (expression)]
+    EQUALEQUAL    [reduce using rule 74 (expression)]
+    NOTEQUAL      [reduce using rule 74 (expression)]
+    AND           [reduce using rule 74 (expression)]
+    OR            [reduce using rule 74 (expression)]
+    DOT           [reduce using rule 74 (expression)]
+    SBO           [reduce using rule 74 (expression)]
+    $default      reduce using rule 74 (expression)
+
+
+State 124
+
+   59 expression: BO expression . BC
+   60           | expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+    BC            shift, and go to state 158
+
+
+State 125
+
+   82 call: IDENTIFIER BO . actuals BC
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 159
+    lValue      go to state 107
+    call        go to state 108
+    actuals     go to state 160
+    constant    go to state 109
+
+
+State 126
+
+   34 stmtBlock: CBO variableDecl stmts CBC .
+
+    $default  reduce using rule 34 (stmtBlock)
+
+
+State 127
+
+   36 stmts: stmt stmts .
+
+    $default  reduce using rule 36 (stmts)
+
+
+State 128
+
+   60 expression: expression PLUS . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 161
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 129
+
+   61 expression: expression MINUS . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 162
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 130
+
+   62 expression: expression MUL . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 163
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 131
+
+   63 expression: expression DIV . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 164
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 132
+
+   64 expression: expression MOD . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 165
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 133
+
+   66 expression: expression LESS . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 166
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 134
+
+   67 expression: expression LESSEQUAL . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 167
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 135
+
+   68 expression: expression GREATER . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 168
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 136
+
+   69 expression: expression GREATEREQUAL . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 169
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 137
+
+   70 expression: expression EQUALEQUAL . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 170
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 138
+
+   71 expression: expression NOTEQUAL . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 171
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 139
+
+   72 expression: expression AND . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 172
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 140
+
+   73 expression: expression OR . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 173
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 141
+
+   37 stmt: expression SEMICOLON .
+
+    $default  reduce using rule 37 (stmt)
+
+
+State 142
+
+   80 lValue: expression DOT . IDENTIFIER
+   83 call: expression DOT . IDENTIFIER BO actualList BC
+
+    IDENTIFIER  shift, and go to state 174
+
+
+State 143
+
+   81 lValue: expression SBO . expression SBC
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 175
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 144
+
+   54 expression: lValue EQUAL . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 176
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 145
+
+   22 classDecl: CLASS IDENTIFIER EXTENDS IDENTIFIER IMPLEMENTS identifiers CBO fields CBC .
+
+    $default  reduce using rule 22 (classDecl)
+
+
+State 146
+
+   33 prototype: VOID IDENTIFIER BO formals BC SEMICOLON .
+
+    $default  reduce using rule 33 (prototype)
+
+
+State 147
+
+   32 prototype: type IDENTIFIER BO formals BC SEMICOLON .
+
+    $default  reduce using rule 32 (prototype)
+
+
+State 148
+
+   48 forStmt: FOR BO expression . SEMICOLON expression SEMICOLON expression BC stmtBlock
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    SEMICOLON     shift, and go to state 177
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+
+State 149
+
+   47 whileStmt: WHILE BO expression . BC stmtBlock
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+    BC            shift, and go to state 178
+
+
+State 150
+
+   45 ifStmt: IF BO expression . BC stmtBlock
+   46       | IF BO expression . BC stmtBlock ELSE stmtBlock
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+    BC            shift, and go to state 179
+
+
+State 151
+
+   49 returnStmt: RETURN expression SEMICOLON .
+
+    $default  reduce using rule 49 (returnStmt)
+
+
+State 152
+
+   77 expression: NEW BO IDENTIFIER . BC
+
+    BC  shift, and go to state 180
+
+
+State 153
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   78           | NEWARRAY BO expression . COMMA expression BC
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    COMMA         shift, and go to state 181
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+
+State 154
+
+   51 printStmt: PRINT BO expressionList . BC SEMICOLON
+   53 expressionList: expressionList . COMMA expression
+
+    COMMA  shift, and go to state 182
+    BC     shift, and go to state 183
+
+
+State 155
+
+   52 expressionList: expression .
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    $default  reduce using rule 52 (expressionList)
+
+
+State 156
+
+   75 expression: READINTEGER BO BC .
+
+    $default  reduce using rule 75 (expression)
+
+
+State 157
+
+   76 expression: READLINE BO BC .
+
+    $default  reduce using rule 76 (expression)
+
+
+State 158
+
+   59 expression: BO expression BC .
+
+    $default  reduce using rule 59 (expression)
+
+
+State 159
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+   86 actuals: expression .
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    $default  reduce using rule 86 (actuals)
+
+
+State 160
+
+   82 call: IDENTIFIER BO actuals . BC
+   87 actuals: actuals . COMMA expression
+
+    COMMA  shift, and go to state 184
+    BC     shift, and go to state 185
+
+
+State 161
+
+   60 expression: expression . PLUS expression
+   60           | expression PLUS expression .
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 60 (expression)]
+    MINUS         [reduce using rule 60 (expression)]
+    MUL           [reduce using rule 60 (expression)]
+    DIV           [reduce using rule 60 (expression)]
+    MOD           [reduce using rule 60 (expression)]
+    LESS          [reduce using rule 60 (expression)]
+    LESSEQUAL     [reduce using rule 60 (expression)]
+    GREATER       [reduce using rule 60 (expression)]
+    GREATEREQUAL  [reduce using rule 60 (expression)]
+    EQUALEQUAL    [reduce using rule 60 (expression)]
+    NOTEQUAL      [reduce using rule 60 (expression)]
+    AND           [reduce using rule 60 (expression)]
+    OR            [reduce using rule 60 (expression)]
+    DOT           [reduce using rule 60 (expression)]
+    SBO           [reduce using rule 60 (expression)]
+    $default      reduce using rule 60 (expression)
+
+
+State 162
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   61           | expression MINUS expression .
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 61 (expression)]
+    MINUS         [reduce using rule 61 (expression)]
+    MUL           [reduce using rule 61 (expression)]
+    DIV           [reduce using rule 61 (expression)]
+    MOD           [reduce using rule 61 (expression)]
+    LESS          [reduce using rule 61 (expression)]
+    LESSEQUAL     [reduce using rule 61 (expression)]
+    GREATER       [reduce using rule 61 (expression)]
+    GREATEREQUAL  [reduce using rule 61 (expression)]
+    EQUALEQUAL    [reduce using rule 61 (expression)]
+    NOTEQUAL      [reduce using rule 61 (expression)]
+    AND           [reduce using rule 61 (expression)]
+    OR            [reduce using rule 61 (expression)]
+    DOT           [reduce using rule 61 (expression)]
+    SBO           [reduce using rule 61 (expression)]
+    $default      reduce using rule 61 (expression)
+
+
+State 163
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   62           | expression MUL expression .
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 62 (expression)]
+    MINUS         [reduce using rule 62 (expression)]
+    MUL           [reduce using rule 62 (expression)]
+    DIV           [reduce using rule 62 (expression)]
+    MOD           [reduce using rule 62 (expression)]
+    LESS          [reduce using rule 62 (expression)]
+    LESSEQUAL     [reduce using rule 62 (expression)]
+    GREATER       [reduce using rule 62 (expression)]
+    GREATEREQUAL  [reduce using rule 62 (expression)]
+    EQUALEQUAL    [reduce using rule 62 (expression)]
+    NOTEQUAL      [reduce using rule 62 (expression)]
+    AND           [reduce using rule 62 (expression)]
+    OR            [reduce using rule 62 (expression)]
+    DOT           [reduce using rule 62 (expression)]
+    SBO           [reduce using rule 62 (expression)]
+    $default      reduce using rule 62 (expression)
+
+
+State 164
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   63           | expression DIV expression .
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 63 (expression)]
+    MINUS         [reduce using rule 63 (expression)]
+    MUL           [reduce using rule 63 (expression)]
+    DIV           [reduce using rule 63 (expression)]
+    MOD           [reduce using rule 63 (expression)]
+    LESS          [reduce using rule 63 (expression)]
+    LESSEQUAL     [reduce using rule 63 (expression)]
+    GREATER       [reduce using rule 63 (expression)]
+    GREATEREQUAL  [reduce using rule 63 (expression)]
+    EQUALEQUAL    [reduce using rule 63 (expression)]
+    NOTEQUAL      [reduce using rule 63 (expression)]
+    AND           [reduce using rule 63 (expression)]
+    OR            [reduce using rule 63 (expression)]
+    DOT           [reduce using rule 63 (expression)]
+    SBO           [reduce using rule 63 (expression)]
+    $default      reduce using rule 63 (expression)
+
+
+State 165
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   64           | expression MOD expression .
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 64 (expression)]
+    MINUS         [reduce using rule 64 (expression)]
+    MUL           [reduce using rule 64 (expression)]
+    DIV           [reduce using rule 64 (expression)]
+    MOD           [reduce using rule 64 (expression)]
+    LESS          [reduce using rule 64 (expression)]
+    LESSEQUAL     [reduce using rule 64 (expression)]
+    GREATER       [reduce using rule 64 (expression)]
+    GREATEREQUAL  [reduce using rule 64 (expression)]
+    EQUALEQUAL    [reduce using rule 64 (expression)]
+    NOTEQUAL      [reduce using rule 64 (expression)]
+    AND           [reduce using rule 64 (expression)]
+    OR            [reduce using rule 64 (expression)]
+    DOT           [reduce using rule 64 (expression)]
+    SBO           [reduce using rule 64 (expression)]
+    $default      reduce using rule 64 (expression)
+
+
+State 166
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   66           | expression LESS expression .
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 66 (expression)]
+    MINUS         [reduce using rule 66 (expression)]
+    MUL           [reduce using rule 66 (expression)]
+    DIV           [reduce using rule 66 (expression)]
+    MOD           [reduce using rule 66 (expression)]
+    LESS          [reduce using rule 66 (expression)]
+    LESSEQUAL     [reduce using rule 66 (expression)]
+    GREATER       [reduce using rule 66 (expression)]
+    GREATEREQUAL  [reduce using rule 66 (expression)]
+    EQUALEQUAL    [reduce using rule 66 (expression)]
+    NOTEQUAL      [reduce using rule 66 (expression)]
+    AND           [reduce using rule 66 (expression)]
+    OR            [reduce using rule 66 (expression)]
+    DOT           [reduce using rule 66 (expression)]
+    SBO           [reduce using rule 66 (expression)]
+    $default      reduce using rule 66 (expression)
+
+
+State 167
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   67           | expression LESSEQUAL expression .
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 67 (expression)]
+    MINUS         [reduce using rule 67 (expression)]
+    MUL           [reduce using rule 67 (expression)]
+    DIV           [reduce using rule 67 (expression)]
+    MOD           [reduce using rule 67 (expression)]
+    LESS          [reduce using rule 67 (expression)]
+    LESSEQUAL     [reduce using rule 67 (expression)]
+    GREATER       [reduce using rule 67 (expression)]
+    GREATEREQUAL  [reduce using rule 67 (expression)]
+    EQUALEQUAL    [reduce using rule 67 (expression)]
+    NOTEQUAL      [reduce using rule 67 (expression)]
+    AND           [reduce using rule 67 (expression)]
+    OR            [reduce using rule 67 (expression)]
+    DOT           [reduce using rule 67 (expression)]
+    SBO           [reduce using rule 67 (expression)]
+    $default      reduce using rule 67 (expression)
+
+
+State 168
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   68           | expression GREATER expression .
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 68 (expression)]
+    MINUS         [reduce using rule 68 (expression)]
+    MUL           [reduce using rule 68 (expression)]
+    DIV           [reduce using rule 68 (expression)]
+    MOD           [reduce using rule 68 (expression)]
+    LESS          [reduce using rule 68 (expression)]
+    LESSEQUAL     [reduce using rule 68 (expression)]
+    GREATER       [reduce using rule 68 (expression)]
+    GREATEREQUAL  [reduce using rule 68 (expression)]
+    EQUALEQUAL    [reduce using rule 68 (expression)]
+    NOTEQUAL      [reduce using rule 68 (expression)]
+    AND           [reduce using rule 68 (expression)]
+    OR            [reduce using rule 68 (expression)]
+    DOT           [reduce using rule 68 (expression)]
+    SBO           [reduce using rule 68 (expression)]
+    $default      reduce using rule 68 (expression)
+
+
+State 169
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   69           | expression GREATEREQUAL expression .
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 69 (expression)]
+    MINUS         [reduce using rule 69 (expression)]
+    MUL           [reduce using rule 69 (expression)]
+    DIV           [reduce using rule 69 (expression)]
+    MOD           [reduce using rule 69 (expression)]
+    LESS          [reduce using rule 69 (expression)]
+    LESSEQUAL     [reduce using rule 69 (expression)]
+    GREATER       [reduce using rule 69 (expression)]
+    GREATEREQUAL  [reduce using rule 69 (expression)]
+    EQUALEQUAL    [reduce using rule 69 (expression)]
+    NOTEQUAL      [reduce using rule 69 (expression)]
+    AND           [reduce using rule 69 (expression)]
+    OR            [reduce using rule 69 (expression)]
+    DOT           [reduce using rule 69 (expression)]
+    SBO           [reduce using rule 69 (expression)]
+    $default      reduce using rule 69 (expression)
+
+
+State 170
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   70           | expression EQUALEQUAL expression .
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 70 (expression)]
+    MINUS         [reduce using rule 70 (expression)]
+    MUL           [reduce using rule 70 (expression)]
+    DIV           [reduce using rule 70 (expression)]
+    MOD           [reduce using rule 70 (expression)]
+    LESS          [reduce using rule 70 (expression)]
+    LESSEQUAL     [reduce using rule 70 (expression)]
+    GREATER       [reduce using rule 70 (expression)]
+    GREATEREQUAL  [reduce using rule 70 (expression)]
+    EQUALEQUAL    [reduce using rule 70 (expression)]
+    NOTEQUAL      [reduce using rule 70 (expression)]
+    AND           [reduce using rule 70 (expression)]
+    OR            [reduce using rule 70 (expression)]
+    DOT           [reduce using rule 70 (expression)]
+    SBO           [reduce using rule 70 (expression)]
+    $default      reduce using rule 70 (expression)
+
+
+State 171
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   71           | expression NOTEQUAL expression .
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 71 (expression)]
+    MINUS         [reduce using rule 71 (expression)]
+    MUL           [reduce using rule 71 (expression)]
+    DIV           [reduce using rule 71 (expression)]
+    MOD           [reduce using rule 71 (expression)]
+    LESS          [reduce using rule 71 (expression)]
+    LESSEQUAL     [reduce using rule 71 (expression)]
+    GREATER       [reduce using rule 71 (expression)]
+    GREATEREQUAL  [reduce using rule 71 (expression)]
+    EQUALEQUAL    [reduce using rule 71 (expression)]
+    NOTEQUAL      [reduce using rule 71 (expression)]
+    AND           [reduce using rule 71 (expression)]
+    OR            [reduce using rule 71 (expression)]
+    DOT           [reduce using rule 71 (expression)]
+    SBO           [reduce using rule 71 (expression)]
+    $default      reduce using rule 71 (expression)
+
+
+State 172
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   72           | expression AND expression .
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 72 (expression)]
+    MINUS         [reduce using rule 72 (expression)]
+    MUL           [reduce using rule 72 (expression)]
+    DIV           [reduce using rule 72 (expression)]
+    MOD           [reduce using rule 72 (expression)]
+    LESS          [reduce using rule 72 (expression)]
+    LESSEQUAL     [reduce using rule 72 (expression)]
+    GREATER       [reduce using rule 72 (expression)]
+    GREATEREQUAL  [reduce using rule 72 (expression)]
+    EQUALEQUAL    [reduce using rule 72 (expression)]
+    NOTEQUAL      [reduce using rule 72 (expression)]
+    AND           [reduce using rule 72 (expression)]
+    OR            [reduce using rule 72 (expression)]
+    DOT           [reduce using rule 72 (expression)]
+    SBO           [reduce using rule 72 (expression)]
+    $default      reduce using rule 72 (expression)
+
+
+State 173
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   73           | expression OR expression .
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 73 (expression)]
+    MINUS         [reduce using rule 73 (expression)]
+    MUL           [reduce using rule 73 (expression)]
+    DIV           [reduce using rule 73 (expression)]
+    MOD           [reduce using rule 73 (expression)]
+    LESS          [reduce using rule 73 (expression)]
+    LESSEQUAL     [reduce using rule 73 (expression)]
+    GREATER       [reduce using rule 73 (expression)]
+    GREATEREQUAL  [reduce using rule 73 (expression)]
+    EQUALEQUAL    [reduce using rule 73 (expression)]
+    NOTEQUAL      [reduce using rule 73 (expression)]
+    AND           [reduce using rule 73 (expression)]
+    OR            [reduce using rule 73 (expression)]
+    DOT           [reduce using rule 73 (expression)]
+    SBO           [reduce using rule 73 (expression)]
+    $default      reduce using rule 73 (expression)
+
+
+State 174
+
+   80 lValue: expression DOT IDENTIFIER .
+   83 call: expression DOT IDENTIFIER . BO actualList BC
+
+    BO  shift, and go to state 186
+
+    $default  reduce using rule 80 (lValue)
+
+
+State 175
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   81       | expression SBO expression . SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+    SBC           shift, and go to state 187
+
+
+State 176
+
+   54 expression: lValue EQUAL expression .
+   60           | expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    PLUS          [reduce using rule 54 (expression)]
+    MINUS         [reduce using rule 54 (expression)]
+    MUL           [reduce using rule 54 (expression)]
+    DIV           [reduce using rule 54 (expression)]
+    MOD           [reduce using rule 54 (expression)]
+    LESS          [reduce using rule 54 (expression)]
+    LESSEQUAL     [reduce using rule 54 (expression)]
+    GREATER       [reduce using rule 54 (expression)]
+    GREATEREQUAL  [reduce using rule 54 (expression)]
+    EQUALEQUAL    [reduce using rule 54 (expression)]
+    NOTEQUAL      [reduce using rule 54 (expression)]
+    AND           [reduce using rule 54 (expression)]
+    OR            [reduce using rule 54 (expression)]
+    DOT           [reduce using rule 54 (expression)]
+    SBO           [reduce using rule 54 (expression)]
+    $default      reduce using rule 54 (expression)
+
+
+State 177
+
+   48 forStmt: FOR BO expression SEMICOLON . expression SEMICOLON expression BC stmtBlock
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 188
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 178
+
+   47 whileStmt: WHILE BO expression BC . stmtBlock
+
+    CBO  shift, and go to state 62
+
+    stmtBlock  go to state 189
+
+
+State 179
+
+   45 ifStmt: IF BO expression BC . stmtBlock
+   46       | IF BO expression BC . stmtBlock ELSE stmtBlock
+
+    CBO  shift, and go to state 62
+
+    stmtBlock  go to state 190
+
+
+State 180
+
+   77 expression: NEW BO IDENTIFIER BC .
+
+    $default  reduce using rule 77 (expression)
+
+
+State 181
+
+   78 expression: NEWARRAY BO expression COMMA . expression BC
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 191
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 182
+
+   53 expressionList: expressionList COMMA . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 192
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 183
+
+   51 printStmt: PRINT BO expressionList BC . SEMICOLON
+
+    SEMICOLON  shift, and go to state 193
+
+
+State 184
+
+   87 actuals: actuals COMMA . expression
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 194
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 185
+
+   82 call: IDENTIFIER BO actuals BC .
+
+    $default  reduce using rule 82 (call)
+
+
+State 186
+
+   83 call: expression DOT IDENTIFIER BO . actualList BC
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    $default  reduce using rule 85 (actualList)
+
+    expression  go to state 159
+    lValue      go to state 107
+    call        go to state 108
+    actualList  go to state 195
+    actuals     go to state 196
+    constant    go to state 109
+
+
+State 187
+
+   81 lValue: expression SBO expression SBC .
+
+    $default  reduce using rule 81 (lValue)
+
+
+State 188
+
+   48 forStmt: FOR BO expression SEMICOLON expression . SEMICOLON expression BC stmtBlock
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    SEMICOLON     shift, and go to state 197
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+
+State 189
+
+   47 whileStmt: WHILE BO expression BC stmtBlock .
+
+    $default  reduce using rule 47 (whileStmt)
+
+
+State 190
+
+   45 ifStmt: IF BO expression BC stmtBlock .
+   46       | IF BO expression BC stmtBlock . ELSE stmtBlock
+
+    ELSE  shift, and go to state 198
+
+    $default  reduce using rule 45 (ifStmt)
+
+
+State 191
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   78           | NEWARRAY BO expression COMMA expression . BC
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+    BC            shift, and go to state 199
+
+
+State 192
+
+   53 expressionList: expressionList COMMA expression .
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    $default  reduce using rule 53 (expressionList)
+
+
+State 193
+
+   51 printStmt: PRINT BO expressionList BC SEMICOLON .
+
+    $default  reduce using rule 51 (printStmt)
+
+
+State 194
+
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+   87 actuals: actuals COMMA expression .
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+
+    $default  reduce using rule 87 (actuals)
+
+
+State 195
+
+   83 call: expression DOT IDENTIFIER BO actualList . BC
+
+    BC  shift, and go to state 200
+
+
+State 196
+
+   84 actualList: actuals .
+   87 actuals: actuals . COMMA expression
+
+    COMMA  shift, and go to state 184
+
+    $default  reduce using rule 84 (actualList)
+
+
+State 197
+
+   48 forStmt: FOR BO expression SEMICOLON expression SEMICOLON . expression BC stmtBlock
+
+    _NULL         shift, and go to state 76
+    THIS          shift, and go to state 77
+    NEW           shift, and go to state 83
+    NEWARRAY      shift, and go to state 84
+    READINTEGER   shift, and go to state 86
+    READLINE      shift, and go to state 87
+    _TRUE         shift, and go to state 88
+    _FALSE        shift, and go to state 89
+    MINUS         shift, and go to state 90
+    NOT           shift, and go to state 91
+    BO            shift, and go to state 92
+    INT_VALUE     shift, and go to state 93
+    DOUBLE_VALUE  shift, and go to state 94
+    STRING_VALUE  shift, and go to state 95
+    IDENTIFIER    shift, and go to state 96
+
+    expression  go to state 201
+    lValue      go to state 107
+    call        go to state 108
+    constant    go to state 109
+
+
+State 198
+
+   46 ifStmt: IF BO expression BC stmtBlock ELSE . stmtBlock
+
+    CBO  shift, and go to state 62
+
+    stmtBlock  go to state 202
+
+
+State 199
+
+   78 expression: NEWARRAY BO expression COMMA expression BC .
+
+    $default  reduce using rule 78 (expression)
+
+
+State 200
+
+   83 call: expression DOT IDENTIFIER BO actualList BC .
+
+    $default  reduce using rule 83 (call)
+
+
+State 201
+
+   48 forStmt: FOR BO expression SEMICOLON expression SEMICOLON expression . BC stmtBlock
+   60 expression: expression . PLUS expression
+   61           | expression . MINUS expression
+   62           | expression . MUL expression
+   63           | expression . DIV expression
+   64           | expression . MOD expression
+   66           | expression . LESS expression
+   67           | expression . LESSEQUAL expression
+   68           | expression . GREATER expression
+   69           | expression . GREATEREQUAL expression
+   70           | expression . EQUALEQUAL expression
+   71           | expression . NOTEQUAL expression
+   72           | expression . AND expression
+   73           | expression . OR expression
+   80 lValue: expression . DOT IDENTIFIER
+   81       | expression . SBO expression SBC
+   83 call: expression . DOT IDENTIFIER BO actualList BC
+
+    PLUS          shift, and go to state 128
+    MINUS         shift, and go to state 129
+    MUL           shift, and go to state 130
+    DIV           shift, and go to state 131
+    MOD           shift, and go to state 132
+    LESS          shift, and go to state 133
+    LESSEQUAL     shift, and go to state 134
+    GREATER       shift, and go to state 135
+    GREATEREQUAL  shift, and go to state 136
+    EQUALEQUAL    shift, and go to state 137
+    NOTEQUAL      shift, and go to state 138
+    AND           shift, and go to state 139
+    OR            shift, and go to state 140
+    DOT           shift, and go to state 142
+    SBO           shift, and go to state 143
+    BC            shift, and go to state 203
+
+
+State 202
+
+   46 ifStmt: IF BO expression BC stmtBlock ELSE stmtBlock .
+
+    $default  reduce using rule 46 (ifStmt)
+
+
+State 203
+
+   48 forStmt: FOR BO expression SEMICOLON expression SEMICOLON expression BC . stmtBlock
+
+    CBO  shift, and go to state 62
+
+    stmtBlock  go to state 204
+
+
+State 204
+
+   48 forStmt: FOR BO expression SEMICOLON expression SEMICOLON expression BC stmtBlock .
+
+    $default  reduce using rule 48 (forStmt)

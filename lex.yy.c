@@ -2335,17 +2335,21 @@ void yyfree (void * ptr )
 
 
 void printToken(int line, int column, char* yytokentype, char* sType){
-    
     printf("\t| %d\t| %d\t\t | %s\t\t | %s\t\t |\n", line, column, yytokentype, sType);
 }
 
-int main(int argc, char **argv)  
+int main(int argc, char **argv)
 {
-    ++argv, --argc;     
-    if (argc > 0)            
-        yyin = fopen(argv[0], "r");    
-    else            
+    ++argv, --argc;
+    if (argc > 0)
+        yyin = fopen(argv[0], "r");
+    else
         yyin = stdin;
-    while(1)  
-        yylex();    
+
+    if(argc > 1){
+        while(1)
+            yylex();
+    } else{
+        yyparse();
+    }
 }

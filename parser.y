@@ -1,29 +1,44 @@
 %{
+#include <stdio.h>
 
+int yylex();
+int yyerror(char *s);
 
 %}
 
-%token VOID INT DOUBLE BOOL STRING CLASS INTERFACE _NULL THIS EXTENDS IMPLEMENTS FOR WHILE IF ELSE RETURN BREAK NEW NEWARRAY PRINT READINTEGER READLINE TRUE FALSE 
+%token VOID INT DOUBLE BOOL STRING CLASS INTERFACE _NULL THIS EXTENDS IMPLEMENTS FOR WHILE IF ELSE RETURN BREAK NEW NEWARRAY PRINT READINTEGER READLINE _TRUE _FALSE 
 %token <ival> INT_VALUE 
+%token <dval> DOUBLE_VALUE
 %token <cval> CHAR_VALUE 
 %token <sval> STRING_VALUE 
 %token <sval> IDENTIFIER 
 %token PLUS MINUS MUL DIV MOD LESS LESSEQUAL GREATER GREATEREQUAL EQUALEQUAL EQUAL NOTEQUAL AND OR NOT 
 %token SEMICOLON COMMA DOT SBO SBC BO BC CBO CBC
 
-%type <program> program
-%type <statement> statement 
-%type <statements> statements 
+%union {
+    int ival;
+    double dval;
+    char cval;
+    char* sval;
+}
+
 
 %%
 
-program         : statements {};
+program :   stmts {
+                printf("Program\n");
+            };
 
-statements      : statement {}
-                | statements statement {}
-                ;
+stmts   :   PLUS {
+                printf("Program\n");
+            }
+            | PLUS stmts;
 
-statement       : VOID {}
-                ;
 
 %%
+
+int yyerror(char *s)
+{
+	printf("Syntax Error on line %s\n", s);
+	return 0;
+}

@@ -1,0 +1,183 @@
+Terminals unused in grammar
+
+   VOID
+   INT
+   DOUBLE
+   BOOL
+   STRING
+   CLASS
+   INTERFACE
+   _NULL
+   THIS
+   EXTENDS
+   IMPLEMENTS
+   FOR
+   WHILE
+   IF
+   ELSE
+   RETURN
+   BREAK
+   NEW
+   NEWARRAY
+   PRINT
+   READINTEGER
+   READLINE
+   _TRUE
+   _FALSE
+   INT_VALUE
+   DOUBLE_VALUE
+   CHAR_VALUE
+   STRING_VALUE
+   IDENTIFIER
+   MINUS
+   MUL
+   DIV
+   MOD
+   LESS
+   LESSEQUAL
+   GREATER
+   GREATEREQUAL
+   EQUALEQUAL
+   EQUAL
+   NOTEQUAL
+   AND
+   OR
+   NOT
+   SEMICOLON
+   COMMA
+   DOT
+   SBO
+   SBC
+   BO
+   BC
+   CBO
+   CBC
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: stmts
+
+    2 stmts: PLUS
+    3      | PLUS stmts
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+VOID (258)
+INT (259)
+DOUBLE (260)
+BOOL (261)
+STRING (262)
+CLASS (263)
+INTERFACE (264)
+_NULL (265)
+THIS (266)
+EXTENDS (267)
+IMPLEMENTS (268)
+FOR (269)
+WHILE (270)
+IF (271)
+ELSE (272)
+RETURN (273)
+BREAK (274)
+NEW (275)
+NEWARRAY (276)
+PRINT (277)
+READINTEGER (278)
+READLINE (279)
+_TRUE (280)
+_FALSE (281)
+INT_VALUE <ival> (282)
+DOUBLE_VALUE <dval> (283)
+CHAR_VALUE <cval> (284)
+STRING_VALUE <sval> (285)
+IDENTIFIER <sval> (286)
+PLUS (287) 2 3
+MINUS (288)
+MUL (289)
+DIV (290)
+MOD (291)
+LESS (292)
+LESSEQUAL (293)
+GREATER (294)
+GREATEREQUAL (295)
+EQUALEQUAL (296)
+EQUAL (297)
+NOTEQUAL (298)
+AND (299)
+OR (300)
+NOT (301)
+SEMICOLON (302)
+COMMA (303)
+DOT (304)
+SBO (305)
+SBC (306)
+BO (307)
+BC (308)
+CBO (309)
+CBC (310)
+
+
+Nonterminals, with rules where they appear
+
+$accept (56)
+    on left: 0
+program (57)
+    on left: 1, on right: 0
+stmts (58)
+    on left: 2 3, on right: 1 3
+
+
+State 0
+
+    0 $accept: . program $end
+
+    PLUS  shift, and go to state 1
+
+    program  go to state 2
+    stmts    go to state 3
+
+
+State 1
+
+    2 stmts: PLUS .
+    3      | PLUS . stmts
+
+    PLUS  shift, and go to state 1
+
+    $default  reduce using rule 2 (stmts)
+
+    stmts  go to state 4
+
+
+State 2
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 5
+
+
+State 3
+
+    1 program: stmts .
+
+    $default  reduce using rule 1 (program)
+
+
+State 4
+
+    3 stmts: PLUS stmts .
+
+    $default  reduce using rule 3 (stmts)
+
+
+State 5
+
+    0 $accept: program $end .
+
+    $default  accept

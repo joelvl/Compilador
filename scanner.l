@@ -4,6 +4,7 @@
 
 void printToken(int, int, char* , char*);
 void printError(int, int, char*);
+void printStringError(int, int);
 
 %}
 %option yylineno
@@ -12,6 +13,7 @@ void printError(int, int, char*);
     /*  DEFINICIONES  */
 
 CHAR                        ((\\[n|t|\"|\\])|[^\\\"])+
+INVCHAR						((\\[^n|t|\"|\\])|[^\\\"])+
 ID                          [a-zA-Z_]([a-zA-Z0-9_]{0,30})
 HEXNUM                      0[X|x][0-9a-fA-F]+
 DECNUM                      [-]?[0-9]+
@@ -165,9 +167,22 @@ false                       {   printToken(yylineno, 0, "FALSE", "");
 \"{CHAR}*\"                 {   printToken(yylineno, 0, "STRING_VALUE", strdup(yytext));
                                 return STRING_VALUE;
                             }
+\"{CHAR}*                   {   printStringError(yylineno, 0);
+                                return INVALID_STRING;
+                            }
 \'{CHAR}?\'                 {   printToken(yylineno, 0, "CHAR_VALUE", strdup(yytext));
                                 return CHAR_VALUE; 
                             }
+\"{INVCHAR}*\"		        {   printError(yylineno, 0, strdup(yytext));
+                                return INVALID_STRING;
+							}
+\"{INVCHAR}*                {   printStringError(yylineno, 0);
+                                return INVALID_STRING;
+                            }
+\'{INVCHAR}?\'		        {   printError(yylineno, 0, strdup(yytext));
+                                return INVALID_CHAR;
+                            }							
+							
 {ID}                        {   printToken(yylineno, 0, "IDENTIFIER", strdup(yytext));
                                 return IDENTIFIER; 
                             }
@@ -177,17 +192,29 @@ false                       {   printToken(yylineno, 0, "FALSE", "");
 \n                          ;
 [ ]                         ;
 .                           {   printError(yylineno, 0, strdup(yytext));
+								return INVALID_CHAR;
 							}
 
 %%
 
 void printToken(int line, int column, char* yytokentype, char* sType){
-    printf("\t| %d\t| %d\t\t | %s\t\t | %s\t\t |\n", line, column, yytokentype, sType);
+    int n = 10; 
+    int len = strlen(yytokentype);
+    n = n - len;
+    printf("\t| %d\t\t| %d\t\t |", line, column);
+    printf("%s", yytokentype);
+    for(int i = 0; i < n ; i++){
+        printf(" ");
+    }
+    printf("\t\t| %s\t\t |\n", sType);
 }
 
 void printError(int line, int column, char* sType){
-	//printf("Lexical Error in line: %d, column: %d. Invalid character: %s\n", line, column, sType);
 	printf("%d:%d: Lexical Error: Invalid character %s\n", line, column, sType);
+}
+
+void printStringError(int line, int column){
+	printf("%d:%d: Lexical Error: Unclosed string.", line, column);
 }
 
 int main(int argc, char **argv)

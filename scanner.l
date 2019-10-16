@@ -198,7 +198,15 @@ false                       {   printToken(yylineno, 0, "FALSE", "");
 %%
 
 void printToken(int line, int column, char* yytokentype, char* sType){
-    printf("\t| %d\t| %d\t\t | %s\t\t | %s\t\t |\n", line, column, yytokentype, sType);
+    int n = 10; 
+    int len = strlen(yytokentype);
+    n = n - len;
+    printf("\t| %d\t\t| %d\t\t |", line, column);
+    printf("%s", yytokentype);
+    for(int i = 0; i < n ; i++){
+        printf(" ");
+    }
+    printf("\t\t| %s\t\t |\n", sType);
 }
 
 void printError(int line, int column, char* sType){

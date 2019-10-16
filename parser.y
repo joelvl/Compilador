@@ -22,6 +22,10 @@ int yyerror(char *s);
     char* sval;
 }
 
+%left AND OR NOT
+%left PLUS MINUS
+%left MUL DIV MOD
+%nonassoc GREATER GREATEREQUAL LESS LESSEQUAL NOTEQUAL EQUALEQUAL
 
 %%  //TERMINALES MAYUS - NO TERMINALES MINUS
 
@@ -32,7 +36,7 @@ program                 :   decls
                         ;
 
 decls                   :   decl
-                        |   decl decls
+                        |   decls decl
                         ;
 
 decl                    :   variableDecl 
@@ -41,22 +45,12 @@ decl                    :   variableDecl
                         |   interfaceDecl
                         ;
 
-variableDecl            :   variable SEMICOLON
+optArray                :
+                        |   SBO SBC
                         ;
 
-variable                :   type IDENTIFIER
-                        ;
-
-type                    :   INT 
-                        |   DOUBLE 
-                        |   BOOL 
-                        |   STRING 
-                        |   IDENTIFIER
-                        |   type SBO SBC //CHECK
-                        ;
-
-identifiers             :   IDENTIFIER IDENTIFIER
-                        |   IDENTIFIER identifiers
+identifiers             :   IDENTIFIER
+                        |   identifiers IDENTIFIER
                         ;
 
 functionDecl            :   type IDENTIFIER BO formals BC stmtBlock
@@ -64,17 +58,22 @@ functionDecl            :   type IDENTIFIER BO formals BC stmtBlock
                         ;
 
 formals                 :   variable
-                        |   variable COMMA formals
+                        |   formals COMMA variable //FIX
                         ;
 
-classDecl               :   CLASS IDENTIFIER EXTENDS IDENTIFIER IMPLEMENTS identifiers CBO fields CBC
-                        |   CLASS IDENTIFIER IMPLEMENTS identifiers CBO fields CBC
-                        |   CLASS IDENTIFIER EXTENDS IDENTIFIER CBO fields CBC
-                        |   CLASS IDENTIFIER CBO fields CBC
+classDecl               :   CLASS IDENTIFIER optExtends optImplements CBO fields CBC
                         ;
 
-fields                  :   //NON
-                        |   field fields
+optExtends              :   EXTENDS IDENTIFIER
+                        |
+                        ;
+
+optImplements           :   IMPLEMENTS identifiers
+                        |
+                        ;
+
+fields                  :
+                        |   fields field
                         ;
 
 field                   :   variableDecl 
@@ -84,20 +83,39 @@ field                   :   variableDecl
 interfaceDecl           :   INTERFACE IDENTIFIER CBO prototype CBC
                         ;
 
-prototype               :   //NON
+prototype               :
                         |   type IDENTIFIER BO formals BC SEMICOLON
                         |   VOID IDENTIFIER BO formals BC SEMICOLON
                         ;
 
-stmtBlock               :   CBO variableDecl stmts CBC
+variableDecls           :
+                        |   variableDecls variableDecl
                         ;
 
-stmts                   :  
-                        |   stmt stmts
+stmts                   :
+                        |   stmts stmt
                         ;
 
-stmt                    :   expression SEMICOLON
-                        |   ifStmt
+stmtBlock               :   CBO variableDecls stmts CBC
+                        ;
+
+variableDecl            :   variable SEMICOLON
+                        ;
+
+variable                :   type IDENTIFIER
+                        ;
+
+type                    :   INT optArray
+                        |   DOUBLE optArray
+                        |   BOOL optArray
+                        |   STRING optArray
+                        |   IDENTIFIER optArray
+                        ;
+
+
+
+stmt                    :   ifStmt
+                        |   expression SEMICOLON
                         |   whileStmt
                         |   forStmt
                         |   breakStmt 
@@ -106,8 +124,11 @@ stmt                    :   expression SEMICOLON
                         |   stmtBlock
                         ;
 
-ifStmt                  :   IF BO expression BC stmtBlock
-                        |   IF BO expression BC stmtBlock ELSE stmtBlock
+ifStmt                  :   IF BO expression BC stmtBlock optElse
+                        ;
+
+optElse                 :
+                        |   ELSE stmtBlock
                         ;
 
 whileStmt               :   WHILE BO expression BC stmtBlock
@@ -119,7 +140,7 @@ forStmt                 :   FOR BO expression SEMICOLON expression SEMICOLON exp
 returnStmt              :   RETURN expression SEMICOLON
                         ;
 
-breakStmt               :   BREAK
+breakStmt               :   BREAK SEMICOLON
                         ;
                         
 printStmt               :   PRINT BO expressionList BC SEMICOLON
@@ -129,39 +150,47 @@ expressionList          :   expression
                         |   expressionList COMMA expression
                         ;   
 
-expression              :   lValue EQUAL expression 
-                        |   constant 
-                        |   lValue 
-                        |   THIS 
-                        |   call 
+
+expression              :   expression PLUS tExpression
+                        |   expression MINUS tExpression
+                        |   expression MUL tExpression
+                        |   expression DIV tExpression
+                        |   expression MOD tExpression
+                        |   expression LESS tExpression
+                        |   expression LESSEQUAL tExpression
+                        |   expression GREATER tExpression
+                        |   expression GREATEREQUAL tExpression
+                        |   expression EQUALEQUAL tExpression
+                        |   expression NOTEQUAL tExpression
+                        |   expression AND tExpression
+                        |   expression OR tExpression
+                        |   tExpression
+                        ;
+
+tExpression             :   lValue optEqual
+                        |   constant
+                        |   call
+                        |   THIS
                         |   BO expression BC
-                        |   expression PLUS expression
-                        |   expression MINUS expression
-                        |   expression MUL expression
-                        |   expression DIV expression
-                        |   expression MOD expression
                         |   MINUS expression
-                        |   expression LESS expression
-                        |   expression LESSEQUAL expression
-                        |   expression GREATER expression
-                        |   expression GREATEREQUAL expression
-                        |   expression EQUALEQUAL expression
-                        |   expression NOTEQUAL expression
-                        |   expression AND expression
-                        |   expression OR expression
                         |   NOT expression
                         |   READINTEGER BO BC
                         |   READLINE BO BC
                         |   NEW BO IDENTIFIER BC
-                        |   NEWARRAY BO expression COMMA expression BC
+                        |   NEWARRAY BO expression COMMA type BC
                         ;
+
+optEqual                :
+                        |   EQUAL expression
+                        ;
+
 
 lValue                  :   IDENTIFIER 
                         |   expression DOT IDENTIFIER
                         |   expression SBO expression SBC
                         ;
 
-call                    :   IDENTIFIER BO actuals BC
+call                    :   IDENTIFIER BO actualList BC
                         |   expression DOT IDENTIFIER BO actualList BC
                         ;
 

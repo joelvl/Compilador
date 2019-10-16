@@ -100,8 +100,10 @@ extern int yydebug;
     INT_VALUE = 306,
     DOUBLE_VALUE = 307,
     CHAR_VALUE = 308,
-    STRING_VALUE = 309,
-    IDENTIFIER = 310
+    INVALID_CHAR = 309,
+    STRING_VALUE = 310,
+    INVALID_STRING = 311,
+    IDENTIFIER = 312
   };
 #endif
 
@@ -110,14 +112,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 18 "parser.y" /* yacc.c:1921  */
+#line 20 "parser.y" /* yacc.c:1921  */
 
     int ival;
     double dval;
     char cval;
     char* sval;
 
-#line 121 "parser.tab.h" /* yacc.c:1921  */
+#line 123 "parser.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -4,4 +4,4 @@
 **Pasos para ejecutar**
 
 - Make
-- ./parser <archivo>
+- ./parser *archivo*

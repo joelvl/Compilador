@@ -153,40 +153,60 @@ expressionList          :   expression
                         ;   
 
 
-expression              :   expression PLUS tExpression
-                        |   expression MINUS tExpression
-                        |   expression MUL tExpression
-                        |   expression DIV tExpression
-                        |   expression MOD tExpression
-                        |   expression LESS tExpression
-                        |   expression LESSEQUAL tExpression
-                        |   expression GREATER tExpression
-                        |   expression GREATEREQUAL tExpression
-                        |   expression EQUALEQUAL tExpression
-                        |   expression NOTEQUAL tExpression
-                        |   expression AND tExpression
-                        |   expression OR tExpression
-                        |   tExpression
+expression              :   expressionA
                         ;
 
-tExpression             :   lValue optEqual
+expressionA             :   expressionA EQUAL expressionA
+                        |   expressionB
+                        ;
+
+expressionB             :   expressionB OR expressionC
+                        |   expressionC
+                        ;
+
+expressionC             :   expressionC AND expressionD
+                        |   expressionD
+                        ;
+
+expressionD             :   expressionD EQUALEQUAL expressionE
+                        |   expressionD NOTEQUAL expressionE
+                        |   expressionE
+                        ;
+
+expressionE             :   expressionE LESS expressionF
+                        |   expressionE LESSEQUAL expressionF
+                        |   expressionE GREATER expressionF
+                        |   expressionE GREATEREQUAL expressionF
+                        |   expressionF
+                        ;
+
+expressionF             :   expressionF PLUS expressionG
+                        |   expressionF MINUS expressionG
+                        |   expressionG
+                        ;
+
+expressionG             :   expressionG MUL expressionH
+                        |   expressionG DIV expressionH
+                        |   expressionG MOD expressionH
+                        |   expressionH
+                        ;
+
+expressionH             :   NOT expressionH
+                        |   MINUS expressionH
+                        |   expressionI
+                        ;
+
+expressionI             :   lValue EQUAL expressionA
+                        |   lValue
                         |   constant
                         |   call
-                        |   THIS
-                        |   BO expression BC
-                        |   MINUS expression
-                        |   NOT expression
                         |   READINTEGER BO BC
                         |   READLINE BO BC
                         |   NEW BO IDENTIFIER BC
-                        |   NEWARRAY BO expression COMMA type BC
+                        |   NEWARRAY BO expressionA COMMA type BC
+                        |   THIS
+                        |   BO expressionA BC
                         ;
-
-optEqual                :
-                        |   EQUAL expression
-                        ;
-
-
 lValue                  :   IDENTIFIER 
                         |   expression DOT IDENTIFIER
                         |   expression SBO expression SBC

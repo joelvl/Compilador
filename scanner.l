@@ -3,6 +3,7 @@
 
 
 void printToken(int, int, char* , char*);
+void printError(int, int, char*);
 
 %}
 %option yylineno
@@ -175,13 +176,18 @@ false                       {   printToken(yylineno, 0, "FALSE", "");
     /* OTHER */
 \n                          ;
 [ ]                         ;
-.                           {   printToken(yylineno, 0, "NOT VALID", strdup(yytext));
-                            }
+.                           {   printError(yylineno, 0, strdup(yytext));
+							}
 
 %%
 
 void printToken(int line, int column, char* yytokentype, char* sType){
     printf("\t| %d\t| %d\t\t | %s\t\t | %s\t\t |\n", line, column, yytokentype, sType);
+}
+
+void printError(int line, int column, char* sType){
+	//printf("Lexical Error in line: %d, column: %d. Invalid character: %s\n", line, column, sType);
+	printf("%d:%d: Lexical Error: Invalid character %s\n", line, column, sType);
 }
 
 int main(int argc, char **argv)

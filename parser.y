@@ -12,7 +12,9 @@ int yyerror(char *s);
 %token <ival> INT_VALUE 
 %token <dval> DOUBLE_VALUE
 %token <cval> CHAR_VALUE 
-%token <sval> STRING_VALUE 
+%token <cval> INVALID_CHAR 
+%token <sval> STRING_VALUE
+%token <sval> INVALID_STRING 
 %token <sval> IDENTIFIER 
 
 %union {

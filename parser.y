@@ -59,8 +59,9 @@ functionDecl            :   type IDENTIFIER BO formals BC stmtBlock
                         |   VOID IDENTIFIER BO formals BC stmtBlock
                         ;
 
-formals                 :   variable
-                        |   formals COMMA variable //FIX
+formals                 :
+                        |   COMMA variable
+                        |   variable formals
                         ;
 
 classDecl               :   CLASS IDENTIFIER optExtends optImplements CBO fields CBC
@@ -90,15 +91,12 @@ prototype               :
                         |   VOID IDENTIFIER BO formals BC SEMICOLON
                         ;
 
-variableDecls           :
-                        |   variableDecls variableDecl
-                        ;
-
 stmts                   :
-                        |   stmts stmt
+                        |   stmt stmts
+                        |   variableDecl stmts
                         ;
 
-stmtBlock               :   CBO variableDecls stmts CBC
+stmtBlock               :   CBO stmts CBC
                         ;
 
 variableDecl            :   variable SEMICOLON
@@ -150,70 +148,43 @@ printStmt               :   PRINT BO expressionList BC SEMICOLON
 
 expressionList          :   expression
                         |   expressionList COMMA expression
-                        ;   
-
-
-expression              :   expressionA
                         ;
 
-expressionA             :   expressionA EQUAL expressionA
-                        |   expressionB
-                        ;
 
-expressionB             :   expressionB OR expressionC
-                        |   expressionC
-                        ;
+expression              :   expression OR expression
+                        |   expression AND expression
+                        |   expression EQUALEQUAL expression
+                        |   expression NOTEQUAL expression
+                        |   expression LESS expression
+                        |   expression LESSEQUAL expression
+                        |   expression GREATER expression
+                        |   expression GREATEREQUAL expression
+                        |   expression PLUS expression
+                        |   expression MINUS expression
+                        |   expression MUL expression
+                        |   expression DIV expression
+                        |   expression MOD expression
+                        |   NOT expression
+                        |   MINUS expression
+                        
 
-expressionC             :   expressionC AND expressionD
-                        |   expressionD
-                        ;
+                        //TODO FIX CONFLICTS
+                        //|   expression EQUAL expression
+                        //|   expression SBO expression SBC
+                        //|   expression DOT IDENTIFIER optActualList
 
-expressionD             :   expressionD EQUALEQUAL expressionE
-                        |   expressionD NOTEQUAL expressionE
-                        |   expressionE
-                        ;
-
-expressionE             :   expressionE LESS expressionF
-                        |   expressionE LESSEQUAL expressionF
-                        |   expressionE GREATER expressionF
-                        |   expressionE GREATEREQUAL expressionF
-                        |   expressionF
-                        ;
-
-expressionF             :   expressionF PLUS expressionG
-                        |   expressionF MINUS expressionG
-                        |   expressionG
-                        ;
-
-expressionG             :   expressionG MUL expressionH
-                        |   expressionG DIV expressionH
-                        |   expressionG MOD expressionH
-                        |   expressionH
-                        ;
-
-expressionH             :   NOT expressionH
-                        |   MINUS expressionH
-                        |   expressionI
-                        ;
-
-expressionI             :   lValue EQUAL expressionA
-                        |   lValue
+                        |   IDENTIFIER optActualList
                         |   constant
-                        |   call
                         |   READINTEGER BO BC
                         |   READLINE BO BC
                         |   NEW BO IDENTIFIER BC
-                        |   NEWARRAY BO expressionA COMMA type BC
+                        |   NEWARRAY BO expression COMMA type BC
                         |   THIS
-                        |   BO expressionA BC
-                        ;
-lValue                  :   IDENTIFIER 
-                        |   expression DOT IDENTIFIER
-                        |   expression SBO expression SBC
+                        |   BO expression BC
                         ;
 
-call                    :   IDENTIFIER BO actualList BC
-                        |   expression DOT IDENTIFIER BO actualList BC
+optActualList           :
+                        |   BO actualList BC
                         ;
 
 actualList              :   actuals

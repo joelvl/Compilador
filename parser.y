@@ -27,7 +27,7 @@ int yyerror(char *s);
 %left AND OR NOT
 %left PLUS MINUS
 %left MUL DIV MOD
-%nonassoc GREATER GREATEREQUAL LESS LESSEQUAL NOTEQUAL EQUALEQUAL
+%nonassoc GREATER GREATEREQUAL LESS LESSEQUAL NOTEQUAL EQUALEQUAL EQUAL DOT SBO SBC
 
 %%  //TERMINALES MAYUS - NO TERMINALES MINUS
 
@@ -45,10 +45,6 @@ decl                    :   variableDecl
                         |   functionDecl 
                         |   classDecl 
                         |   interfaceDecl
-                        ;
-
-optArray                :
-                        |   SBO SBC
                         ;
 
 identifiers             :   IDENTIFIER
@@ -105,14 +101,13 @@ variableDecl            :   variable SEMICOLON
 variable                :   type IDENTIFIER
                         ;
 
-type                    :   INT optArray
-                        |   DOUBLE optArray
-                        |   BOOL optArray
-                        |   STRING optArray
-                        |   IDENTIFIER optArray
+type                    :   INT
+                        |   DOUBLE
+                        |   BOOL
+                        |   STRING
+                        |   IDENTIFIER
+                        |   type SBO SBC
                         ;
-
-
 
 stmt                    :   ifStmt
                         |   expression SEMICOLON
@@ -164,16 +159,12 @@ expression              :   expression OR expression
                         |   expression MUL expression
                         |   expression DIV expression
                         |   expression MOD expression
+                        |   expression EQUAL expression
                         |   NOT expression
                         |   MINUS expression
-                        
-
-                        //TODO FIX CONFLICTS
-                        //|   expression EQUAL expression
-                        //|   expression SBO expression SBC
-                        //|   expression DOT IDENTIFIER optActualList
-
-                        |   IDENTIFIER optActualList
+                        |   expression SBO expression SBC
+                        |   expression DOT IDENTIFIER optActualList
+                        |   IDENTIFIER
                         |   constant
                         |   READINTEGER BO BC
                         |   READLINE BO BC

@@ -201,12 +201,13 @@ void printToken(int line, int column, char* yytokentype, char* sType){
     int n = 10; 
     int len = strlen(yytokentype);
     n = n - len;
-    printf("\t| %d\t\t| %d\t\t |", line, column);
-    printf("%s", yytokentype);
+    printf("\t| %d\t\t| %d\t\t|", line, column);
+    printf(" %s", yytokentype);
     for(int i = 0; i < n ; i++){
         printf(" ");
     }
-    printf("\t\t| %s\t\t |\n", sType);
+    printf("\t\t| %s\t\t|\n", sType);
+    printf("        -------------------------------------------------------------------------\n");
 }
 
 void printError(int line, int column, char* sType){
@@ -220,11 +221,10 @@ void printStringError(int line, int column){
 int main(int argc, char **argv)
 {
     ++argv, --argc;
-    if (argc > 0)
-        yyin = fopen(argv[0], "r");
-    else
-        yyin = stdin;
-
+    yyin = fopen(argv[0], "r");
+    printf("        -------------------------------------------------------------------------\n");
+	printf("\t| Line\t\t| Column\t| Token\t\t\t| Value\t\t|\n");
+    printf("        -------------------------------------------------------------------------\n");
     if(argc > 1){
         while(1)
             yylex();

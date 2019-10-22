@@ -212,7 +212,7 @@ static void insertNodo(Nodo *pNodo){
 
 static void readVector(){
       for(int i =stack.size()-1; i>=0; i--){       
-            printf("%s","  ombre: ");
+            printf("%s","  Nombre: ");
             printf("%s\n",stack[i]->name.c_str());
       }
 }

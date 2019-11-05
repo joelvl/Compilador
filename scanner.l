@@ -1,13 +1,17 @@
 %{
+#include "ast.h"
 #include "parser.tab.h"
+#include <cstring>
 
+#define YY_DECL extern "C" int yylex()
 
 void printToken(int, int, char* , char*);
 void printError(int, int, char*);
 void printStringError(int, int);
-int  yyparse(void);
-int column = 1;
 
+extern union node yylval;
+
+int column = 1;
 
 %}
 %option yylineno
@@ -200,9 +204,8 @@ false                       {   printToken(yylineno, yyleng, "FALSE", "");
 								return INVALID_CHAR;
 							}
 
-%%
 
-int  yywrap(void) {}
+%%
 
 void printToken(int line, int lenToken, char *yytokentype, char *sType){
     int n = 10; 
@@ -224,19 +227,4 @@ void printError(int line, int column, char* sType){
 
 void printStringError(int line, int column){
 	printf("%d:%d: Lexical Error: Unclosed string.", line, column);
-}
-
-int main(int argc, char **argv)
-{
-    ++argv, --argc;
-    yyin = fopen(argv[0], "r");
-    printf("        -------------------------------------------------------------------------\n");
-	printf("\t| Line\t\t| Column\t| Token\t\t\t| Value\t\t|\n");
-    printf("        -------------------------------------------------------------------------\n");
-    if(argc > 1){
-        while(1)
-            yylex();
-    } else{
-        yyparse();
-    }
 }

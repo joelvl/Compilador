@@ -1,14 +1,17 @@
 %{
+#include "ast.h"
 #include <stdio.h>
+#include <iostream>
+#include <string>
 #include <vector>
 
-#include "Nodo.h"
+extern "C" int yylex();
+extern "C" int yyparse();
+extern "C" void yyerror(char *s);
+extern "C" int yywrap(void){return 1;}
 
-int yylex();
-int yyerror(char *s);
-static void insertNodo(Nodo *pNodo);
-static void readVector();
-
+extern union node yylval;
+extern class ast_node * start;
 %}
 
 %token VOID INT DOUBLE BOOL STRING CLASS INTERFACE _NULL THIS EXTENDS IMPLEMENTS FOR WHILE IF ELSE RETURN BREAK NEW NEWARRAY PRINT READINTEGER READLINE _TRUE _FALSE 
@@ -36,184 +39,164 @@ static void readVector();
 
 %%  //TERMINALES MAYUS - NO TERMINALES MINUS
 
-program                 :   decls {insertNodo(new Nodo("program"," ")); printf("OK\n"); readVector();}
+program                 :   decls
                         ;
 
-decls                   :   decl {insertNodo(new Nodo("declas","  "));}
-                        |   decls decl {insertNodo(new Nodo("declas","  "));}
+decls                   :   decl
+                        |   decls decl 
                         ;
 
-decl                    :   variableDecl {insertNodo(new Nodo("decla","  "));}
-                        |   functionDecl {insertNodo(new Nodo("decla","  "));}
-                        |   classDecl {insertNodo(new Nodo("decla","  "));}
-                        |   interfaceDecl {insertNodo(new Nodo("decla","  "));}
+decl                    :   variableDecl 
+                        |   functionDecl { }
+                        |   classDecl { }
+                        |   interfaceDecl { }
                         ;
 
-identifiers             :   IDENTIFIER {insertNodo(new Nodo("identifiers","  "));}
-                        |   identifiers IDENTIFIER {insertNodo(new Nodo("identifiers","  "));}
+identifiers             :   IDENTIFIER { }
+                        |   identifiers IDENTIFIER { }
                         ;
 
-functionDecl            :   type IDENTIFIER BO formals BC stmtBlock {insertNodo(new Nodo("functionDecl","  "));}
-                        |   VOID IDENTIFIER BO formals BC stmtBlock {insertNodo(new Nodo("functionDecl","  "));}
+functionDecl            :   type IDENTIFIER BO formals BC stmtBlock { }
+                        |   VOID IDENTIFIER BO formals BC stmtBlock { }
                         ;
 
 formals                 :
-                        |   COMMA variable {insertNodo(new Nodo("formals","  "));}
-                        |   variable formals {insertNodo(new Nodo("formals","  "));}
+                        |   COMMA variable { }
+                        |   variable formals { }
                         ;
 
-classDecl               :   CLASS IDENTIFIER optExtends optImplements CBO fields CBC {insertNodo(new Nodo("classDecl","  "));}
+classDecl               :   CLASS IDENTIFIER optExtends optImplements CBO fields CBC { }
                         ;
 
-optExtends              :   EXTENDS IDENTIFIER {insertNodo(new Nodo("optExtends","  "));}
+optExtends              :   EXTENDS IDENTIFIER { }
                         |
                         ;
 
-optImplements           :   IMPLEMENTS identifiers {insertNodo(new Nodo("optImplements","  "));}
+optImplements           :   IMPLEMENTS identifiers { }
                         |
                         ;
 
 fields                  :
-                        |   fields field {insertNodo(new Nodo("fields","  "));}
+                        |   fields field { }
                         ;
 
-field                   :   variableDecl {insertNodo(new Nodo("field","  "));}
-                        |   functionDecl {insertNodo(new Nodo("field","  "));}
+field                   :   variableDecl { }
+                        |   functionDecl { }
                         ;
 
-interfaceDecl           :   INTERFACE IDENTIFIER CBO prototype CBC {insertNodo(new Nodo("interfaceDecl","  "));}
+interfaceDecl           :   INTERFACE IDENTIFIER CBO prototype CBC { }
                         ;
 
 prototype               :
-                        |   type IDENTIFIER BO formals BC SEMICOLON {insertNodo(new Nodo("prototype","  "));}
-                        |   VOID IDENTIFIER BO formals BC SEMICOLON {insertNodo(new Nodo("prototype","  "));}
+                        |   type IDENTIFIER BO formals BC SEMICOLON { }
+                        |   VOID IDENTIFIER BO formals BC SEMICOLON { }
                         ;
 
 stmts                   :
-                        |   stmt stmts {insertNodo(new Nodo("stmts","  "));}
-                        |   variableDecl stmts {insertNodo(new Nodo("stmts","  "));}
+                        |   stmt stmts { }
+                        |   variableDecl stmts { }
                         ;
 
-stmtBlock               :   CBO stmts CBC {insertNodo(new Nodo("stmtBlock","  "));}
+stmtBlock               :   CBO stmts CBC { }
                         ;
 
-variableDecl            :   variable SEMICOLON {insertNodo(new Nodo("variableDecl","  "));}
+variableDecl            :   variable SEMICOLON { }
                         ;
 
-variable                :   type IDENTIFIER {insertNodo(new Nodo("variable","  "));}
+variable                :   type IDENTIFIER { }
                         ;
 
-type                    :   INT {insertNodo(new Nodo("type","  "));}
-                        |   DOUBLE {insertNodo(new Nodo("type","  "));}
-                        |   BOOL {insertNodo(new Nodo("type","  "));}
-                        |   STRING {insertNodo(new Nodo("type","  "));}
-                        |   IDENTIFIER {insertNodo(new Nodo("type","  "));}
-                        |   type SBO SBC {insertNodo(new Nodo("type","  "));}
+type                    :   INT { }
+                        |   DOUBLE { }
+                        |   BOOL { }
+                        |   STRING { }
+                        |   IDENTIFIER { }
+                        |   type SBO SBC { }
                         ;
 
-stmt                    :   ifStmt {insertNodo(new Nodo("stmt","  "));}
-                        |   expression SEMICOLON {insertNodo(new Nodo("stmt","  "));}
-                        |   whileStmt {insertNodo(new Nodo("stmt","  "));}
-                        |   forStmt {insertNodo(new Nodo("stmt","  "));}
-                        |   breakStmt {insertNodo(new Nodo("stmt","  "));}
-                        |   returnStmt {insertNodo(new Nodo("stmt","  "));}
-                        |   printStmt {insertNodo(new Nodo("stmt","  "));}
-                        |   stmtBlock {insertNodo(new Nodo("stmt","  "));}
+stmt                    :   ifStmt { }
+                        |   expression SEMICOLON { }
+                        |   whileStmt { }
+                        |   forStmt { }
+                        |   breakStmt { }
+                        |   returnStmt { }
+                        |   printStmt { }
+                        |   stmtBlock { }
                         ;
 
-ifStmt                  :   IF BO expression BC stmtBlock optElse {insertNodo(new Nodo("Program","  "));}
+ifStmt                  :   IF BO expression BC stmtBlock optElse { }
                         ;
 
 optElse                 :
-                        |   ELSE stmtBlock {insertNodo(new Nodo("optElse","  "));}
+                        |   ELSE stmtBlock { }
                         ;
 
-whileStmt               :   WHILE BO expression BC stmtBlock {insertNodo(new Nodo("whileStmt","  "));}
+whileStmt               :   WHILE BO expression BC stmtBlock { }
                         ;
 
-forStmt                 :   FOR BO expression SEMICOLON expression SEMICOLON expression BC stmtBlock {insertNodo(new Nodo("forStmt","  "));}
+forStmt                 :   FOR BO expression SEMICOLON expression SEMICOLON expression BC stmtBlock { }
                         ;
                         
-returnStmt              :   RETURN expression SEMICOLON {insertNodo(new Nodo("returnStmt","  "));}
+returnStmt              :   RETURN expression SEMICOLON { }
                         ;
 
-breakStmt               :   BREAK SEMICOLON {insertNodo(new Nodo("breakStmt","  "));}
+breakStmt               :   BREAK SEMICOLON { }
                         ;
                         
-printStmt               :   PRINT BO expressionList BC SEMICOLON {insertNodo(new Nodo("printStmt","  "));}
+printStmt               :   PRINT BO expressionList BC SEMICOLON { }
                         ;
 
-expressionList          :   expression {insertNodo(new Nodo("expressionList","  "));}
-                        |   expressionList COMMA expression {insertNodo(new Nodo("expressionList","  "));}
+expressionList          :   expression { }
+                        |   expressionList COMMA expression { }
                         ;
 
 
-expression              :   expression OR expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression AND expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression EQUALEQUAL expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression NOTEQUAL expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression LESS expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression LESSEQUAL expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression GREATER expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression GREATEREQUAL expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression PLUS expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression MINUS expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression MUL expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression DIV expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression MOD expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression EQUAL expression {insertNodo(new Nodo("expression","  "));} 
-                        |   NOT expression {insertNodo(new Nodo("expression","  "));}
-                        |   MINUS expression {insertNodo(new Nodo("expression","  "));}
-                        |   expression SBO expression SBC {insertNodo(new Nodo("expression","  "));}
-                        |   expression DOT IDENTIFIER optActualList {insertNodo(new Nodo("expression","  "));}
-                        |   IDENTIFIER {insertNodo(new Nodo("expression","  "));}
-                        |   constant {insertNodo(new Nodo("expression","  "));}
-                        |   READINTEGER BO BC {insertNodo(new Nodo("expression","  "));}
-                        |   READLINE BO BC {insertNodo(new Nodo("expression","  "));}
-                        |   NEW BO IDENTIFIER BC {insertNodo(new Nodo("expression","  "));}
-                        |   NEWARRAY BO expression COMMA type BC {insertNodo(new Nodo("expression","  "));}
-                        |   THIS {insertNodo(new Nodo("expression","  "));} 
-                        |   BO expression BC {insertNodo(new Nodo("expression","  "));}
+expression              :   expression OR expression { }
+                        |   expression AND expression { }
+                        |   expression EQUALEQUAL expression { }
+                        |   expression NOTEQUAL expression { }
+                        |   expression LESS expression { }
+                        |   expression LESSEQUAL expression { }
+                        |   expression GREATER expression { }
+                        |   expression GREATEREQUAL expression { }
+                        |   expression PLUS expression { }
+                        |   expression MINUS expression { }
+                        |   expression MUL expression { }
+                        |   expression DIV expression { }
+                        |   expression MOD expression { }
+                        |   expression EQUAL expression { } 
+                        |   NOT expression { }
+                        |   MINUS expression { }
+                        |   expression SBO expression SBC { }
+                        |   expression DOT IDENTIFIER optActualList { }
+                        |   IDENTIFIER { }
+                        |   constant { }
+                        |   READINTEGER BO BC { }
+                        |   READLINE BO BC { }
+                        |   NEW BO IDENTIFIER BC { }
+                        |   NEWARRAY BO expression COMMA type BC { }
+                        |   THIS { } 
+                        |   BO expression BC { }
                         ;
 
 optActualList           :
-                        |   BO actualList BC {insertNodo(new Nodo("optActualList","  "));}
+                        |   BO actualList BC { }
                         ;
 
-actualList              :   actuals {insertNodo(new Nodo("actualList","  "));}
+actualList              :   actuals { }
                         |
                         ;
 
-actuals                 :   expression {insertNodo(new Nodo("actuals","  "));}
-                        |   actuals COMMA expression {insertNodo(new Nodo("actuals","  "));}
+actuals                 :   expression { }
+                        |   actuals COMMA expression { }
                         ;
 
-constant                :   INT_VALUE {insertNodo(new Nodo("constant","  "));}
-                        |   DOUBLE_VALUE {insertNodo(new Nodo("constant","  "));}
-                        |   _TRUE {insertNodo(new Nodo("constant","  "));}
-                        |   _FALSE {insertNodo(new Nodo("constant","  "));}
-                        |   STRING_VALUE {insertNodo(new Nodo("constant","  "));}
-                        |   _NULL {insertNodo(new Nodo("constant","  "));}
+constant                :   INT_VALUE { }
+                        |   DOUBLE_VALUE { }
+                        |   _TRUE { }
+                        |   _FALSE { }
+                        |   STRING_VALUE { }
+                        |   _NULL { }
                         ;
 
 %%
-
-int yyerror(char *s)
-{
-	printf("Syntax Error on line %s\n", s);
-	return 0;
-}
-
-static vector<Nodo*> stack;
-
-static void insertNodo(Nodo *pNodo){
-    stack.push_back(pNodo);
-}
-
-static void readVector(){
-      for(int i =stack.size()-1; i>=0; i--){       
-            printf("%s","  Nombre: ");
-            printf("%s\n",stack[i]->name.c_str());
-      }
-}
-

@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.3.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,11 +41,14 @@
    define necessary library symbols; they are noted "INFRINGES ON
    USER NAME SPACE" below.  */
 
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
+
 /* Identify Bison output.  */
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.4"
+#define YYBISON_VERSION "3.3.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -61,27 +65,33 @@
 
 
 
-/* Copy the first part of user declarations.  */
-#line 1 "parser.y" /* yacc.c:339  */
+/* First part of user prologue.  */
+#line 1 "parser.y" /* yacc.c:337  */
 
+#include "ast.h"
 #include <stdio.h>
+#include <iostream>
+#include <string>
 #include <vector>
 
-#include "Nodo.h"
+extern "C" int yylex();
+extern "C" int yyparse();
+extern "C" void yyerror(char *s);
+extern "C" int yywrap(void){return 1;}
 
-int yylex();
-int yyerror(char *s);
-static void insertNodo(Nodo *pNodo);
-static void readVector();
+extern union node yylval;
+extern class ast_node * start;
 
-
-#line 79 "parser.tab.c" /* yacc.c:339  */
-
+#line 86 "parser.tab.c" /* yacc.c:337  */
 # ifndef YY_NULLPTR
-#  if defined __cplusplus && 201103L <= __cplusplus
-#   define YY_NULLPTR nullptr
+#  if defined __cplusplus
+#   if 201103L <= __cplusplus
+#    define YY_NULLPTR nullptr
+#   else
+#    define YY_NULLPTR 0
+#   endif
 #  else
-#   define YY_NULLPTR 0
+#   define YY_NULLPTR ((void*)0)
 #  endif
 # endif
 
@@ -173,14 +183,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 25 "parser.y" /* yacc.c:355  */
+#line 28 "parser.y" /* yacc.c:352  */
 
     int ival;
     double dval;
     char cval;
     char* sval;
 
-#line 184 "parser.tab.c" /* yacc.c:355  */
+#line 194 "parser.tab.c" /* yacc.c:352  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -195,9 +205,7 @@ int yyparse (void);
 
 #endif /* !YY_YY_PARSER_TAB_H_INCLUDED  */
 
-/* Copy the second part of user declarations.  */
 
-#line 201 "parser.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -218,13 +226,13 @@ typedef signed char yytype_int8;
 #ifdef YYTYPE_UINT16
 typedef YYTYPE_UINT16 yytype_uint16;
 #else
-typedef unsigned short int yytype_uint16;
+typedef unsigned short yytype_uint16;
 #endif
 
 #ifdef YYTYPE_INT16
 typedef YYTYPE_INT16 yytype_int16;
 #else
-typedef short int yytype_int16;
+typedef short yytype_int16;
 #endif
 
 #ifndef YYSIZE_T
@@ -236,7 +244,7 @@ typedef short int yytype_int16;
 #  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
 #  define YYSIZE_T size_t
 # else
-#  define YYSIZE_T unsigned int
+#  define YYSIZE_T unsigned
 # endif
 #endif
 
@@ -272,15 +280,6 @@ typedef short int yytype_int16;
 # define YY_ATTRIBUTE_UNUSED YY_ATTRIBUTE ((__unused__))
 #endif
 
-#if !defined _Noreturn \
-     && (!defined __STDC_VERSION__ || __STDC_VERSION__ < 201112)
-# if defined _MSC_VER && 1200 <= _MSC_VER
-#  define _Noreturn __declspec (noreturn)
-# else
-#  define _Noreturn YY_ATTRIBUTE ((__noreturn__))
-# endif
-#endif
-
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
 # define YYUSE(E) ((void) (E))
@@ -288,7 +287,7 @@ typedef short int yytype_int16;
 # define YYUSE(E) /* empty */
 #endif
 
-#if defined __GNUC__ && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
+#if defined __GNUC__ && ! defined __ICC && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
 /* Suppress an incorrect diagnostic about yylval being uninitialized.  */
 # define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN \
     _Pragma ("GCC diagnostic push") \
@@ -450,16 +449,16 @@ union yyalloc
 /* YYNSTATES -- Number of states.  */
 #define YYNSTATES  195
 
-/* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
-   by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   312
 
+/* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
+   as returned by yylex, with out-of-bounds checking.  */
 #define YYTRANSLATE(YYX)                                                \
-  ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
+  ((unsigned) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
 
 /* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
-   as returned by yylex, without out-of-bounds checking.  */
+   as returned by yylex.  */
 static const yytype_uint8 yytranslate[] =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -500,16 +499,16 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    39,    39,    42,    43,    46,    47,    48,    49,    52,
-      53,    56,    57,    60,    61,    62,    65,    68,    69,    72,
-      73,    76,    77,    80,    81,    84,    87,    88,    89,    92,
-      93,    94,    97,   100,   103,   106,   107,   108,   109,   110,
-     111,   114,   115,   116,   117,   118,   119,   120,   121,   124,
-     127,   128,   131,   134,   137,   140,   143,   146,   147,   151,
-     152,   153,   154,   155,   156,   157,   158,   159,   160,   161,
-     162,   163,   164,   165,   166,   167,   168,   169,   170,   171,
-     172,   173,   174,   175,   176,   179,   180,   183,   184,   187,
-     188,   191,   192,   193,   194,   195,   196
+       0,    42,    42,    45,    46,    49,    50,    51,    52,    55,
+      56,    59,    60,    63,    64,    65,    68,    71,    72,    75,
+      76,    79,    80,    83,    84,    87,    90,    91,    92,    95,
+      96,    97,   100,   103,   106,   109,   110,   111,   112,   113,
+     114,   117,   118,   119,   120,   121,   122,   123,   124,   127,
+     130,   131,   134,   137,   140,   143,   146,   149,   150,   154,
+     155,   156,   157,   158,   159,   160,   161,   162,   163,   164,
+     165,   166,   167,   168,   169,   170,   171,   172,   173,   174,
+     175,   176,   177,   178,   179,   182,   183,   186,   187,   190,
+     191,   194,   195,   196,   197,   198,   199
 };
 #endif
 
@@ -809,22 +808,22 @@ static const yytype_uint8 yyr2[] =
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)                                  \
-do                                                              \
-  if (yychar == YYEMPTY)                                        \
-    {                                                           \
-      yychar = (Token);                                         \
-      yylval = (Value);                                         \
-      YYPOPSTACK (yylen);                                       \
-      yystate = *yyssp;                                         \
-      goto yybackup;                                            \
-    }                                                           \
-  else                                                          \
-    {                                                           \
-      yyerror (YY_("syntax error: cannot back up")); \
-      YYERROR;                                                  \
-    }                                                           \
-while (0)
+#define YYBACKUP(Token, Value)                                    \
+  do                                                              \
+    if (yychar == YYEMPTY)                                        \
+      {                                                           \
+        yychar = (Token);                                         \
+        yylval = (Value);                                         \
+        YYPOPSTACK (yylen);                                       \
+        yystate = *yyssp;                                         \
+        goto yybackup;                                            \
+      }                                                           \
+    else                                                          \
+      {                                                           \
+        yyerror (YY_("syntax error: cannot back up")); \
+        YYERROR;                                                  \
+      }                                                           \
+  while (0)
 
 /* Error token number */
 #define YYTERROR        1
@@ -864,37 +863,37 @@ do {                                                                      \
 } while (0)
 
 
-/*----------------------------------------.
-| Print this symbol's value on YYOUTPUT.  |
-`----------------------------------------*/
+/*-----------------------------------.
+| Print this symbol's value on YYO.  |
+`-----------------------------------*/
 
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
+yy_symbol_value_print (FILE *yyo, int yytype, YYSTYPE const * const yyvaluep)
 {
-  FILE *yyo = yyoutput;
-  YYUSE (yyo);
+  FILE *yyoutput = yyo;
+  YYUSE (yyoutput);
   if (!yyvaluep)
     return;
 # ifdef YYPRINT
   if (yytype < YYNTOKENS)
-    YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
+    YYPRINT (yyo, yytoknum[yytype], *yyvaluep);
 # endif
   YYUSE (yytype);
 }
 
 
-/*--------------------------------.
-| Print this symbol on YYOUTPUT.  |
-`--------------------------------*/
+/*---------------------------.
+| Print this symbol on YYO.  |
+`---------------------------*/
 
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
+yy_symbol_print (FILE *yyo, int yytype, YYSTYPE const * const yyvaluep)
 {
-  YYFPRINTF (yyoutput, "%s %s (",
+  YYFPRINTF (yyo, "%s %s (",
              yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep);
-  YYFPRINTF (yyoutput, ")");
+  yy_symbol_value_print (yyo, yytype, yyvaluep);
+  YYFPRINTF (yyo, ")");
 }
 
 /*------------------------------------------------------------------.
@@ -928,7 +927,7 @@ do {                                                            \
 static void
 yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule)
 {
-  unsigned long int yylno = yyrline[yyrule];
+  unsigned long yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
   int yyi;
   YYFPRINTF (stderr, "Reducing stack by rule %d (line %lu):\n",
@@ -939,7 +938,7 @@ yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule)
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr,
                        yystos[yyssp[yyi + 1 - yynrhs]],
-                       &(yyvsp[(yyi + 1) - (yynrhs)])
+                       &yyvsp[(yyi + 1) - (yynrhs)]
                                               );
       YYFPRINTF (stderr, "\n");
     }
@@ -1043,7 +1042,10 @@ yytnamerr (char *yyres, const char *yystr)
           case '\\':
             if (*++yyp != '\\')
               goto do_not_strip_quotes;
-            /* Fall through.  */
+            else
+              goto append;
+
+          append:
           default:
             if (yyres)
               yyres[yyn] = *yyp;
@@ -1061,7 +1063,7 @@ yytnamerr (char *yyres, const char *yystr)
   if (! yyres)
     return yystrlen (yystr);
 
-  return yystpcpy (yyres, yystr) - yyres;
+  return (YYSIZE_T) (yystpcpy (yyres, yystr) - yyres);
 }
 # endif
 
@@ -1139,10 +1141,10 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                 yyarg[yycount++] = yytname[yyx];
                 {
                   YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULLPTR, yytname[yyx]);
-                  if (! (yysize <= yysize1
-                         && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
+                  if (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM)
+                    yysize = yysize1;
+                  else
                     return 2;
-                  yysize = yysize1;
                 }
               }
         }
@@ -1154,6 +1156,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
       case N:                               \
         yyformat = S;                       \
       break
+    default: /* Avoid compiler warnings. */
       YYCASE_(0, YY_("syntax error"));
       YYCASE_(1, YY_("syntax error, unexpected %s"));
       YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
@@ -1165,9 +1168,10 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 
   {
     YYSIZE_T yysize1 = yysize + yystrlen (yyformat);
-    if (! (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
+    if (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM)
+      yysize = yysize1;
+    else
       return 2;
-    yysize = yysize1;
   }
 
   if (*yymsg_alloc < yysize)
@@ -1293,23 +1297,31 @@ yyparse (void)
   yychar = YYEMPTY; /* Cause a token to be read.  */
   goto yysetstate;
 
+
 /*------------------------------------------------------------.
-| yynewstate -- Push a new state, which is found in yystate.  |
+| yynewstate -- push a new state, which is found in yystate.  |
 `------------------------------------------------------------*/
- yynewstate:
+yynewstate:
   /* In all cases, when you get here, the value and location stacks
      have just been pushed.  So pushing a state here evens the stacks.  */
   yyssp++;
 
- yysetstate:
-  *yyssp = yystate;
+
+/*--------------------------------------------------------------------.
+| yynewstate -- set current state (the top of the stack) to yystate.  |
+`--------------------------------------------------------------------*/
+yysetstate:
+  *yyssp = (yytype_int16) yystate;
 
   if (yyss + yystacksize - 1 <= yyssp)
+#if !defined yyoverflow && !defined YYSTACK_RELOCATE
+    goto yyexhaustedlab;
+#else
     {
       /* Get the current used size of the three stacks, in elements.  */
-      YYSIZE_T yysize = yyssp - yyss + 1;
+      YYSIZE_T yysize = (YYSIZE_T) (yyssp - yyss + 1);
 
-#ifdef yyoverflow
+# if defined yyoverflow
       {
         /* Give user a chance to reallocate the stack.  Use copies of
            these so that the &'s don't force the real ones into
@@ -1325,14 +1337,10 @@ yyparse (void)
                     &yyss1, yysize * sizeof (*yyssp),
                     &yyvs1, yysize * sizeof (*yyvsp),
                     &yystacksize);
-
         yyss = yyss1;
         yyvs = yyvs1;
       }
-#else /* no yyoverflow */
-# ifndef YYSTACK_RELOCATE
-      goto yyexhaustedlab;
-# else
+# else /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
       if (YYMAXDEPTH <= yystacksize)
         goto yyexhaustedlab;
@@ -1348,22 +1356,22 @@ yyparse (void)
           goto yyexhaustedlab;
         YYSTACK_RELOCATE (yyss_alloc, yyss);
         YYSTACK_RELOCATE (yyvs_alloc, yyvs);
-#  undef YYSTACK_RELOCATE
+# undef YYSTACK_RELOCATE
         if (yyss1 != yyssa)
           YYSTACK_FREE (yyss1);
       }
 # endif
-#endif /* no yyoverflow */
 
       yyssp = yyss + yysize - 1;
       yyvsp = yyvs + yysize - 1;
 
       YYDPRINTF ((stderr, "Stack size increased to %lu\n",
-                  (unsigned long int) yystacksize));
+                  (unsigned long) yystacksize));
 
       if (yyss + yystacksize - 1 <= yyssp)
         YYABORT;
     }
+#endif /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
 
   YYDPRINTF ((stderr, "Entering state %d\n", yystate));
 
@@ -1372,11 +1380,11 @@ yyparse (void)
 
   goto yybackup;
 
+
 /*-----------.
 | yybackup.  |
 `-----------*/
 yybackup:
-
   /* Do appropriate processing given the current state.  Read a
      lookahead token if we need one and don't already have one.  */
 
@@ -1449,7 +1457,7 @@ yydefault:
 
 
 /*-----------------------------.
-| yyreduce -- Do a reduction.  |
+| yyreduce -- do a reduction.  |
 `-----------------------------*/
 yyreduce:
   /* yyn is the number of a rule to reduce with.  */
@@ -1469,524 +1477,500 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 2:
-#line 39 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("program"," ")); printf("OK\n"); readVector();}
-#line 1476 "parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 3:
-#line 42 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("declas","  "));}
-#line 1482 "parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 4:
-#line 43 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("declas","  "));}
-#line 1488 "parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 5:
-#line 46 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("decla","  "));}
-#line 1494 "parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 6:
-#line 47 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("decla","  "));}
-#line 1500 "parser.tab.c" /* yacc.c:1646  */
+        case 6:
+#line 50 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1484 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 7:
-#line 48 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("decla","  "));}
-#line 1506 "parser.tab.c" /* yacc.c:1646  */
+#line 51 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1490 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 8:
-#line 49 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("decla","  "));}
-#line 1512 "parser.tab.c" /* yacc.c:1646  */
+#line 52 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1496 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 9:
-#line 52 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("identifiers","  "));}
-#line 1518 "parser.tab.c" /* yacc.c:1646  */
+#line 55 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1502 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 10:
-#line 53 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("identifiers","  "));}
-#line 1524 "parser.tab.c" /* yacc.c:1646  */
+#line 56 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1508 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 11:
-#line 56 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("functionDecl","  "));}
-#line 1530 "parser.tab.c" /* yacc.c:1646  */
+#line 59 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1514 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 12:
-#line 57 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("functionDecl","  "));}
-#line 1536 "parser.tab.c" /* yacc.c:1646  */
+#line 60 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1520 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 14:
-#line 61 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("formals","  "));}
-#line 1542 "parser.tab.c" /* yacc.c:1646  */
+#line 64 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1526 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 15:
-#line 62 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("formals","  "));}
-#line 1548 "parser.tab.c" /* yacc.c:1646  */
+#line 65 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1532 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 16:
-#line 65 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("classDecl","  "));}
-#line 1554 "parser.tab.c" /* yacc.c:1646  */
+#line 68 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1538 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 17:
-#line 68 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("optExtends","  "));}
-#line 1560 "parser.tab.c" /* yacc.c:1646  */
+#line 71 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1544 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 19:
-#line 72 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("optImplements","  "));}
-#line 1566 "parser.tab.c" /* yacc.c:1646  */
+#line 75 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1550 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 22:
-#line 77 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("fields","  "));}
-#line 1572 "parser.tab.c" /* yacc.c:1646  */
+#line 80 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1556 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 23:
-#line 80 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("field","  "));}
-#line 1578 "parser.tab.c" /* yacc.c:1646  */
+#line 83 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1562 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 24:
-#line 81 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("field","  "));}
-#line 1584 "parser.tab.c" /* yacc.c:1646  */
+#line 84 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1568 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 25:
-#line 84 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("interfaceDecl","  "));}
-#line 1590 "parser.tab.c" /* yacc.c:1646  */
+#line 87 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1574 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 27:
-#line 88 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("prototype","  "));}
-#line 1596 "parser.tab.c" /* yacc.c:1646  */
+#line 91 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1580 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 28:
-#line 89 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("prototype","  "));}
-#line 1602 "parser.tab.c" /* yacc.c:1646  */
+#line 92 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1586 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 30:
-#line 93 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmts","  "));}
-#line 1608 "parser.tab.c" /* yacc.c:1646  */
+#line 96 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1592 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 31:
-#line 94 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmts","  "));}
-#line 1614 "parser.tab.c" /* yacc.c:1646  */
+#line 97 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1598 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 32:
-#line 97 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmtBlock","  "));}
-#line 1620 "parser.tab.c" /* yacc.c:1646  */
+#line 100 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1604 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 33:
-#line 100 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("variableDecl","  "));}
-#line 1626 "parser.tab.c" /* yacc.c:1646  */
+#line 103 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1610 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 34:
-#line 103 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("variable","  "));}
-#line 1632 "parser.tab.c" /* yacc.c:1646  */
+#line 106 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1616 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 35:
-#line 106 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("type","  "));}
-#line 1638 "parser.tab.c" /* yacc.c:1646  */
+#line 109 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1622 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 36:
-#line 107 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("type","  "));}
-#line 1644 "parser.tab.c" /* yacc.c:1646  */
+#line 110 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1628 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 37:
-#line 108 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("type","  "));}
-#line 1650 "parser.tab.c" /* yacc.c:1646  */
+#line 111 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1634 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 38:
-#line 109 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("type","  "));}
-#line 1656 "parser.tab.c" /* yacc.c:1646  */
+#line 112 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1640 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 39:
-#line 110 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("type","  "));}
-#line 1662 "parser.tab.c" /* yacc.c:1646  */
+#line 113 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1646 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 40:
-#line 111 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("type","  "));}
-#line 1668 "parser.tab.c" /* yacc.c:1646  */
+#line 114 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1652 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 41:
-#line 114 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmt","  "));}
-#line 1674 "parser.tab.c" /* yacc.c:1646  */
+#line 117 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1658 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 42:
-#line 115 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmt","  "));}
-#line 1680 "parser.tab.c" /* yacc.c:1646  */
+#line 118 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1664 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 43:
-#line 116 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmt","  "));}
-#line 1686 "parser.tab.c" /* yacc.c:1646  */
+#line 119 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1670 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 44:
-#line 117 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmt","  "));}
-#line 1692 "parser.tab.c" /* yacc.c:1646  */
+#line 120 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1676 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 45:
-#line 118 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmt","  "));}
-#line 1698 "parser.tab.c" /* yacc.c:1646  */
+#line 121 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1682 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 46:
-#line 119 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmt","  "));}
-#line 1704 "parser.tab.c" /* yacc.c:1646  */
+#line 122 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1688 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 47:
-#line 120 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmt","  "));}
-#line 1710 "parser.tab.c" /* yacc.c:1646  */
+#line 123 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1694 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 48:
-#line 121 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("stmt","  "));}
-#line 1716 "parser.tab.c" /* yacc.c:1646  */
+#line 124 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1700 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 49:
-#line 124 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("Program","  "));}
-#line 1722 "parser.tab.c" /* yacc.c:1646  */
+#line 127 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1706 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 51:
-#line 128 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("optElse","  "));}
-#line 1728 "parser.tab.c" /* yacc.c:1646  */
+#line 131 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1712 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 52:
-#line 131 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("whileStmt","  "));}
-#line 1734 "parser.tab.c" /* yacc.c:1646  */
+#line 134 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1718 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 53:
-#line 134 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("forStmt","  "));}
-#line 1740 "parser.tab.c" /* yacc.c:1646  */
+#line 137 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1724 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 54:
-#line 137 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("returnStmt","  "));}
-#line 1746 "parser.tab.c" /* yacc.c:1646  */
+#line 140 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1730 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 55:
-#line 140 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("breakStmt","  "));}
-#line 1752 "parser.tab.c" /* yacc.c:1646  */
+#line 143 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1736 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 56:
-#line 143 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("printStmt","  "));}
-#line 1758 "parser.tab.c" /* yacc.c:1646  */
+#line 146 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1742 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 57:
-#line 146 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expressionList","  "));}
-#line 1764 "parser.tab.c" /* yacc.c:1646  */
+#line 149 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1748 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 58:
-#line 147 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expressionList","  "));}
-#line 1770 "parser.tab.c" /* yacc.c:1646  */
+#line 150 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1754 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 59:
-#line 151 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1776 "parser.tab.c" /* yacc.c:1646  */
+#line 154 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1760 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 60:
-#line 152 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1782 "parser.tab.c" /* yacc.c:1646  */
+#line 155 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1766 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 61:
-#line 153 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1788 "parser.tab.c" /* yacc.c:1646  */
+#line 156 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1772 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 62:
-#line 154 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1794 "parser.tab.c" /* yacc.c:1646  */
+#line 157 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1778 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 63:
-#line 155 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1800 "parser.tab.c" /* yacc.c:1646  */
+#line 158 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1784 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 64:
-#line 156 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1806 "parser.tab.c" /* yacc.c:1646  */
+#line 159 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1790 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 65:
-#line 157 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1812 "parser.tab.c" /* yacc.c:1646  */
+#line 160 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1796 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 66:
-#line 158 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1818 "parser.tab.c" /* yacc.c:1646  */
+#line 161 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1802 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 67:
-#line 159 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1824 "parser.tab.c" /* yacc.c:1646  */
+#line 162 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1808 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 68:
-#line 160 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1830 "parser.tab.c" /* yacc.c:1646  */
+#line 163 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1814 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 69:
-#line 161 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1836 "parser.tab.c" /* yacc.c:1646  */
+#line 164 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1820 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 70:
-#line 162 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1842 "parser.tab.c" /* yacc.c:1646  */
+#line 165 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1826 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 71:
-#line 163 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1848 "parser.tab.c" /* yacc.c:1646  */
+#line 166 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1832 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 72:
-#line 164 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1854 "parser.tab.c" /* yacc.c:1646  */
+#line 167 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1838 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 73:
-#line 165 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1860 "parser.tab.c" /* yacc.c:1646  */
+#line 168 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1844 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 74:
-#line 166 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1866 "parser.tab.c" /* yacc.c:1646  */
+#line 169 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1850 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 75:
-#line 167 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1872 "parser.tab.c" /* yacc.c:1646  */
+#line 170 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1856 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 76:
-#line 168 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1878 "parser.tab.c" /* yacc.c:1646  */
+#line 171 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1862 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 77:
-#line 169 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1884 "parser.tab.c" /* yacc.c:1646  */
+#line 172 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1868 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 78:
-#line 170 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1890 "parser.tab.c" /* yacc.c:1646  */
+#line 173 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1874 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 79:
-#line 171 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1896 "parser.tab.c" /* yacc.c:1646  */
+#line 174 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1880 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 80:
-#line 172 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1902 "parser.tab.c" /* yacc.c:1646  */
+#line 175 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1886 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 81:
-#line 173 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1908 "parser.tab.c" /* yacc.c:1646  */
+#line 176 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1892 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 82:
-#line 174 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1914 "parser.tab.c" /* yacc.c:1646  */
+#line 177 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1898 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 83:
-#line 175 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1920 "parser.tab.c" /* yacc.c:1646  */
+#line 178 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1904 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 84:
-#line 176 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("expression","  "));}
-#line 1926 "parser.tab.c" /* yacc.c:1646  */
+#line 179 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1910 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 86:
-#line 180 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("optActualList","  "));}
-#line 1932 "parser.tab.c" /* yacc.c:1646  */
+#line 183 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1916 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 87:
-#line 183 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("actualList","  "));}
-#line 1938 "parser.tab.c" /* yacc.c:1646  */
+#line 186 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1922 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 89:
-#line 187 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("actuals","  "));}
-#line 1944 "parser.tab.c" /* yacc.c:1646  */
+#line 190 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1928 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 90:
-#line 188 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("actuals","  "));}
-#line 1950 "parser.tab.c" /* yacc.c:1646  */
+#line 191 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1934 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 91:
-#line 191 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("constant","  "));}
-#line 1956 "parser.tab.c" /* yacc.c:1646  */
+#line 194 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1940 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 92:
-#line 192 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("constant","  "));}
-#line 1962 "parser.tab.c" /* yacc.c:1646  */
+#line 195 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1946 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 93:
-#line 193 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("constant","  "));}
-#line 1968 "parser.tab.c" /* yacc.c:1646  */
+#line 196 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1952 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 94:
-#line 194 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("constant","  "));}
-#line 1974 "parser.tab.c" /* yacc.c:1646  */
+#line 197 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1958 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 95:
-#line 195 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("constant","  "));}
-#line 1980 "parser.tab.c" /* yacc.c:1646  */
+#line 198 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1964 "parser.tab.c" /* yacc.c:1652  */
     break;
 
   case 96:
-#line 196 "parser.y" /* yacc.c:1646  */
-    {insertNodo(new Nodo("constant","  "));}
-#line 1986 "parser.tab.c" /* yacc.c:1646  */
+#line 199 "parser.y" /* yacc.c:1652  */
+    { }
+#line 1970 "parser.tab.c" /* yacc.c:1652  */
     break;
 
 
-#line 1990 "parser.tab.c" /* yacc.c:1646  */
+#line 1974 "parser.tab.c" /* yacc.c:1652  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2011,14 +1995,13 @@ yyreduce:
   /* Now 'shift' the result of the reduction.  Determine what state
      that goes to, based on the state we popped back to and the rule
      number reduced by.  */
-
-  yyn = yyr1[yyn];
-
-  yystate = yypgoto[yyn - YYNTOKENS] + *yyssp;
-  if (0 <= yystate && yystate <= YYLAST && yycheck[yystate] == *yyssp)
-    yystate = yytable[yystate];
-  else
-    yystate = yydefgoto[yyn - YYNTOKENS];
+  {
+    const int yylhs = yyr1[yyn] - YYNTOKENS;
+    const int yyi = yypgoto[yylhs] + *yyssp;
+    yystate = (0 <= yyi && yyi <= YYLAST && yycheck[yyi] == *yyssp
+               ? yytable[yyi]
+               : yydefgoto[yylhs]);
+  }
 
   goto yynewstate;
 
@@ -2101,12 +2084,10 @@ yyerrlab:
 | yyerrorlab -- error raised explicitly by YYERROR.  |
 `---------------------------------------------------*/
 yyerrorlab:
-
-  /* Pacify compilers like GCC when the user code never invokes
-     YYERROR and the label yyerrorlab therefore never appears in user
-     code.  */
-  if (/*CONSTCOND*/ 0)
-     goto yyerrorlab;
+  /* Pacify compilers when the user code never invokes YYERROR and the
+     label yyerrorlab therefore never appears in user code.  */
+  if (0)
+    YYERROR;
 
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYERROR.  */
@@ -2168,12 +2149,14 @@ yyacceptlab:
   yyresult = 0;
   goto yyreturn;
 
+
 /*-----------------------------------.
 | yyabortlab -- YYABORT comes here.  |
 `-----------------------------------*/
 yyabortlab:
   yyresult = 1;
   goto yyreturn;
+
 
 #if !defined yyoverflow || YYERROR_VERBOSE
 /*-------------------------------------------------.
@@ -2185,6 +2168,10 @@ yyexhaustedlab:
   /* Fall through.  */
 #endif
 
+
+/*-----------------------------------------------------.
+| yyreturn -- parsing is finished, return the result.  |
+`-----------------------------------------------------*/
 yyreturn:
   if (yychar != YYEMPTY)
     {
@@ -2214,25 +2201,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 199 "parser.y" /* yacc.c:1906  */
-
-
-int yyerror(char *s)
-{
-	printf("Syntax Error on line %s\n", s);
-	return 0;
-}
-
-static vector<Nodo*> stack;
-
-static void insertNodo(Nodo *pNodo){
-    stack.push_back(pNodo);
-}
-
-static void readVector(){
-      for(int i =stack.size()-1; i>=0; i--){       
-            printf("%s","  ombre: ");
-            printf("%s\n",stack[i]->name.c_str());
-      }
-}
-
+#line 202 "parser.y" /* yacc.c:1918  */

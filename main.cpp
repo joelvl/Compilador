@@ -8,7 +8,7 @@ extern "C" int yylex();
 extern "C" FILE *yyin;
 extern "C" int yyparse();
 
-ast_program * start;
+AST_Program * start;
 
 int main (const int argc, const char ** argv) {
     if (argc < 2) {

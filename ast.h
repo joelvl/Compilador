@@ -5,460 +5,394 @@
 #include <iostream>
 #include <string>
 #include <vector>
-using namespace std;
+
+class AST_Node; 
+class AST_Program;
+class Declaration_Node;
+class Variable_Declaration_Node;
+class Function_Declaration_Node;
+class Statement_Node;
+class Statement_Block_Node;
+class Expression_Node;
+class If_Statement_Node;
+class While_Statement_Node;
+class For_Statement_Node;
+class Break_Statement_Node;
+class Print_StateMent_Node;
+class Return_Statement_Node;
+class Class_Declaration_Node;
+class Interface_Declaration_Node;
+class Prototype_Node;
+class Identifier_Node;
+class Type_Node;
+class Comparation_Expression_Node;
+class Array_Expression_Node;
+class Call_Expression_Node;
+class Identifier_Expression_Node;
+class Int_Constant_Expression_Node;
+class Double_Constant_Expression_Node;
+class Boolean_Constant_Expression_Node;
+class String_Constant_Expression_Node;
+class Null_Constant_Expression_Node;
+class ReadInteger_Expression_Node;
+class ReadLine_Expression_Node;
+class New_Expression_Node;
+class NewArray_Expression_Node;
+class This_Expression_Node;
 
 
-
-class ast_program;
-class ast_field_decl;
-class ast_var_decl;
-class ast_id;
-class ast_method_decl;
-class ast_type_identifier;
-class ast_statement;
-class ast_expression;
-class ast_block_statement;
-class ast_assignment_statement;
-class ast_method_call;
-class ast_normal_method;
-class ast_callout_method;
-class ast_callout_arg;
-class ast_string_callout_arg;
-class ast_expression_callout_arg;
-class ast_if_statement;
-class ast_for_statement;
-class ast_return_statement;
-class ast_continue_statement;
-class ast_break_statement;
-class ast_location;
-class ast_var_location;
-class ast_array_location;
-class ast_literal_expression;
-class ast_integer_literal_expression;
-class ast_char_literal_expression;
-class ast_true_literal_expression;
-class ast_false_literal_expression;
-class ast_binary_operation_expression;
-class ast_unary_operation_expression;
-
-enum class AssignOp {
-    plus_equal,
-    minus_equal,
-    equal
-};
-
-enum class bin_op {
-    plus_op,
-    minus_op,
-    multiply_op,
-    divide_op,
-    modulo_op,
-    lessthan_op,
-    greaterthan_op,
-    lessequal_op,
-    greaterequal_op,
-    notequal_op,
-    equalequal_op,
-    and_op,
-    or_op
-};
-
-enum class Datatype {
+enum class Datatype
+{
     int_type,
-    void_type,
-    bool_type
+    double_type,
+    bool_type,
+    string_type,
+    identifier_type,
+    null_type
 };
 
-enum class un_op {
-    minus_op,
-    not_op
+enum class Operator_Type
+{
+    PLUS,
+    MINUS,
+    MUL,
+    DIV,
+    MOD,
+    LESS,
+    LESSEQUAL,
+    GREATER,
+    GREATEREQUAL,
+    EQUALEQUAL,
+    EQUAL,
+    NOTEQUAL,
+    AND,
+    OR,
+    NOT
 };
 
 union node{
-  AssignOp assign_op;
-  ast_block_statement * block;
-  ast_callout_arg * callout_arg;
-  ast_expression * expr;
-  ast_field_decl * field_decl;
-  ast_id * var_or_array_identifier;
-  ast_literal_expression * literal;
-  ast_location * location;
-  ast_method_call * method_call;
-  ast_method_decl * method_decl;
-  ast_program * program;
-  ast_statement * statement;
-  ast_type_identifier * type_identifier;
-  ast_var_decl * var_decl;
-  char *sval;
-  char cval;
-  Datatype type;
-  int ival;
-  std::vector<ast_callout_arg *> * callout_arg_list;
-  std::vector<ast_expression *> * expr_list;
-  std::vector<ast_field_decl *> * field_decl_list;
-  std::vector<ast_id *> * identifier_list;
-  std::vector<ast_id *> * var_or_array_identifier_list;
-  std::vector<ast_method_decl *> * method_decl_list;
-  std::vector<ast_statement *> * statement_list;
-  std::vector<ast_type_identifier *> * type_identifier_list;
-  std::vector<ast_var_decl *> * var_decl_list;
+
 };
+
+
 typedef union node YYSTYPE;
 #define YYSTYPE_IS_DECLARED 1
 
-class ast_node {
+class AST_Node {
 public:
-    ast_node() {}
-    ~ast_node() {}
+    AST_Node() {}
+    ~AST_Node() {}
 };
 
-class ast_program : public ast_node
-{
-    string id;
-    vector<ast_field_decl *> * fdl;
-    vector<ast_method_decl *> * mdl;
-public:
-    ast_program(string, vector<ast_field_decl *> * , vector<ast_method_decl *> *);
-    string get_id();
-    vector<ast_method_decl *> * getMdl();
-    vector<ast_field_decl *> * getFdl();
-    ~ast_program() {}
-};
-
-
-class ast_field_decl : public ast_node
-{
-    Datatype type;
-    vector<ast_id *> * id_list;
-public:
-    ast_field_decl(vector<ast_id *> *, Datatype);
-    vector<ast_id *> * get_id_list();
-    Datatype getType();
-    ~ast_field_decl() {}
-};
-
-class ast_var_decl : public ast_node
-{
-    Datatype type;
-    vector<ast_id *> * id_list;
-public:
-    ast_var_decl(vector<ast_id *> *, Datatype);
-    vector<ast_id *> * get_id_list();
-    Datatype getType();
-    ~ast_var_decl() {}
-};
-
-class ast_id
-{
-    string id;
-    int size;
-public:
-    ast_id(string, int);
-    ast_id(string id);
-    string get_id();
-    int getSize();
-    ~ast_id() {}
-};
-
-class ast_method_decl : public ast_node
-{
-    string id;
-    Datatype returnType;
-    vector<ast_type_identifier *> * arguments;
-    ast_block_statement * block;
-public:
-    ast_method_decl(string id, Datatype, vector<ast_type_identifier *> *, ast_block_statement *);
-    string get_id();
-    Datatype getReturnType();
-    vector<ast_type_identifier *> * get_arguments();
-    ast_block_statement * get_block();
-    ~ast_method_decl() {}
-};
-
-class ast_type_identifier : public ast_node
-{
-    string id;
-    Datatype type;
-public:
-    ast_type_identifier(string, Datatype);
-    ~ast_type_identifier() {}
-    string get_id();
-    Datatype getType();
-};
-
-class ast_statement : public ast_node
+class AST_Program: public AST_Node
 {
 public:
-    ast_statement() {}
-    virtual ~ast_statement() {}
-};
-
-
-class ast_expression : public ast_node
-{
-public:
-    ast_expression() {}
-    virtual ~ast_expression() {}
-};
-
-class ast_block_statement : public ast_statement
-{
-    vector<ast_var_decl *> * id_list;
-    vector<ast_statement *> * stmtlist;
-public:
-    ast_block_statement(vector<ast_statement *> * , vector<ast_var_decl *> * );
-    vector<ast_var_decl *> * get_id_list();
-    vector<ast_statement *> * getStmtlist();
-    ~ast_block_statement() {}
-};
-
-class ast_assignment_statement : public ast_statement
-{
-    AssignOp op;
-    ast_location * location;
-    ast_expression * expr;
-public:
-    ast_assignment_statement(AssignOp, ast_location *, ast_expression *);
-    AssignOp get_op();
-    ast_location * getLocation();
-    ast_expression * get_expr();
-    ~ast_assignment_statement() {}
-};
-
-class ast_method_call : public ast_statement, public ast_expression
-{
-public:
-    ast_method_call() { }
-    virtual ~ast_method_call() {}
-};
-
-class ast_normal_method : public ast_method_call
-{
-    string id;
-    vector<ast_expression *> * arguments;
-public:
-    ast_normal_method(string, vector<ast_expression *> * );
-    string get_id();
-    vector<ast_expression *> * get_arguments();
-    ~ast_normal_method() {}
-};
-
-class ast_callout_method : public ast_method_call
-{
-    string method_name;
-    vector<ast_callout_arg *> * arguments;
-public:
-    ast_callout_method(string , vector<ast_callout_arg *> * );
-    string get_method_name();
-    vector<ast_callout_arg *> * get_arguments();
-    ~ast_callout_method() {}
-};
-
-class ast_callout_arg : public ast_expression
-{
-public:
-    ast_callout_arg() {}
-    virtual ~ast_callout_arg() {}
-};
-
-class ast_string_callout_arg : public ast_callout_arg
-{
-    string argument;
-public:
-    ast_string_callout_arg(string);
-    string get_argument();
-    ~ast_string_callout_arg() {}
-};
-
-class ast_expression_callout_arg : public ast_callout_arg
-{
-    ast_expression * argument;
-public:
-    ast_expression_callout_arg(ast_expression *);
-    ast_expression * get_argument();
-    ~ast_expression_callout_arg() {}
-};
-
-class ast_if_statement : public ast_statement
-{
-    ast_expression * condition;
-    ast_block_statement * if_block;
-    ast_block_statement * else_block;
-public:
-    ast_if_statement(ast_expression *, ast_block_statement *, ast_block_statement *);
-    ast_expression * get_condition();
-    ast_block_statement * getIf_block();
-    ast_block_statement * getElse_block();
-    ~ast_if_statement() {}
-};
-
-class ast_for_statement : public ast_statement
-{
-    string id;
-    ast_expression * init_condition;
-    ast_expression * end_condition;
-    ast_block_statement * block;
-public:
-    ast_for_statement(ast_expression *, ast_expression *, ast_block_statement *, string);
-    string get_id();
-    ast_expression * getInit_condition();
-    ast_expression * getEnd_condition();
-    ast_block_statement * get_block();
-    ~ast_for_statement() {}
-};
-
-class ast_return_statement : public ast_statement
-{
-    ast_expression * expr;
-public:
-    ast_return_statement(ast_expression *);
-    ast_expression * get_expr();
-    ~ast_return_statement() {}
-};
-
-class ast_continue_statement : public ast_statement
-{
-public:
-    ast_continue_statement() {}
-    ~ast_continue_statement() {}
-};
-
-class ast_break_statement : public ast_statement
-{
-public:
-    ast_break_statement() {}
-    ~ast_break_statement() {}
-};
-
-class ast_location : public ast_expression
-{
-public:
-    ast_location() {}
-    virtual ~ast_location() {}
-};
-
-class ast_var_location : public ast_location
-{
-    string id;
-public:
-    ast_var_location(string);
-    string get_id();
-    ~ast_var_location() {}
-};
-
-class ast_array_location : public ast_location
-{
-    string id;
-    ast_expression * index;
-public:
-    ast_array_location(string, ast_expression * );
-    string get_id();
-    ast_expression * get_index();
-    ~ast_array_location()
-    {
-
+    std::vector<Declaration_Node* > * declarations;
+    AST_Program(std::vector<Declaration_Node* > * declarations) {
+        this->declarations = declarations;
     }
 };
 
-class ast_literal_expression : public ast_expression
+class Declaration_Node: public AST_Node
 {
 public:
-    ast_literal_expression()
-    {
-
-    }
-    virtual ~ast_literal_expression()
-    {
-
+    Identifier_Node* identifier;
+    Declaration_Node(Identifier_Node* identifier){
+        this->identifier = identifier;
     }
 };
 
-class ast_integer_literal_expression : public ast_literal_expression
+class Variable_Declaration_Node: public Declaration_Node
 {
+public:
+    Type_Node * type_node;
+
+    Variable_Declaration_Node(Type_Node * type_node, Identifier_Node* identifier) : Declaration_Node(identifier){
+        this->type_node = type_node;
+    }
+
+};
+
+class Function_Declaration_Node: public Declaration_Node
+{
+public:
+    Type_Node * type_node;
+    std::vector<Variable_Declaration_Node* >* parameters;
+    Statement_Block_Node* statement_Block;
+    Function_Declaration_Node(Type_Node * type_node, Identifier_Node* identifier, 
+        std::vector<Variable_Declaration_Node*>* parameters, Statement_Block_Node* statement_Block) 
+            : Declaration_Node(identifier){
+        this->type_node = type_node;
+        this->parameters = parameters;
+        this->statement_Block = statement_Block;
+    }
+
+};
+
+class Statement_Node : public AST_Node
+{
+public:
+    Statement_Node(){}
+};
+
+class Statement_Block_Node : public AST_Node
+{
+public:
+    std::vector<Statement_Node* >* statements;
+    Statement_Block_Node(std::vector<Statement_Node* >* statements){
+        this->statements = statements;
+    }
+};
+
+class If_Statement_Node : public Statement_Node
+{
+public:
+    Expression_Node* expression;
+    Statement_Block_Node* if_block;
+    Statement_Block_Node* else_block;
+    If_Statement_Node(Expression_Node* expression, Statement_Block_Node* if_block, Statement_Block_Node* else_block){
+        this->expression = expression;
+        this->if_block = if_block;
+        this->else_block = else_block;
+    }
+};
+
+class While_Statement_Node : public Statement_Node
+{
+public:
+    Expression_Node* expression;
+    Statement_Block_Node* block;
+    While_Statement_Node(Expression_Node* expression, Statement_Block_Node* if_block){
+        this->expression = expression;
+        this->block = block;
+    }
+};
+
+class For_Statement_Node : public Statement_Node
+{
+public:
+    Expression_Node* expressionA;
+    Expression_Node* expressionB;
+    Expression_Node* expressionC;
+    Statement_Block_Node* block;
+    For_Statement_Node(Expression_Node* expressiA, Expression_Node* expressiB, Expression_Node* expressionC, Statement_Block_Node* if_block){
+        this->expressionA = expressionA;
+        this->expressionB = expressionB;
+        this->expressionC = expressionC;
+        this->block = block;
+    }
+};
+
+class Break_Statement_Node : public Statement_Node
+{
+public:
+    Break_Statement_Node();
+};
+
+class Print_StateMent_Node : public Statement_Node
+{
+public:
+    std::vector<Expression_Node*> * expressions;
+    Print_StateMent_Node(std::vector<Expression_Node*> * expressions){
+        this->expressions = expressions;
+    }
+};
+
+class Return_Statement_Node : public Statement_Node
+{
+public:
+    Expression_Node * expression;
+    Return_Statement_Node(Expression_Node * expression){
+        this->expression = expression;
+    }
+};
+
+class Class_Declaration_Node : public Declaration_Node
+{
+public:
+    std::vector<Identifier_Node*> * extends;
+    std::vector<Identifier_Node*> * implements;
+    Class_Declaration_Node(Identifier_Node* identifier, std::vector<Identifier_Node*> * extends, 
+                std::vector<Identifier_Node*> * implements) : Declaration_Node(identifier){
+        this->extends = extends;
+        this->implements = implements;
+    }
+};
+
+class Interface_Declaration_Node : public Declaration_Node
+{
+public:
+    std::vector<Identifier_Node*> * prototypes;
+    Interface_Declaration_Node(std::vector<Identifier_Node*> * prototypes) : Declaration_Node(identifier){
+        this->prototypes = prototypes;
+    }
+};
+
+class Prototype_Node: public Declaration_Node
+{
+public:
+    Type_Node * type_node;
+    std::vector<Variable_Declaration_Node* >* parameters;
+    Prototype_Node(Type_Node * type_node, Identifier_Node* identifier, std::vector<Variable_Declaration_Node*>* parameters) : Declaration_Node(identifier){
+        this->type_node = type_node;
+        this->parameters = parameters;
+    }
+
+};
+
+class Identifier_Node : AST_Node
+{
+public:
+    Identifier_Node* identifier;
+    Identifier_Node(Identifier_Node* identifier){
+        this->identifier = identifier;
+    }
+};
+
+class Type_Node : public AST_Node
+{
+public:
+    Datatype type;
+    Identifier_Node* identifier;
+    Type_Node(Datatype type){
+        this->type = type;
+    }
+    Type_Node(Datatype type, Identifier_Node* identifier){
+        this->type = type;
+        this->identifier = identifier;
+    }
+};
+
+class Expression_Node : public AST_Node
+{
+public:
+    Expression_Node(){}
+};
+
+class Comparation_Expression_Node : public Expression_Node
+{
+public:
+    Expression_Node* leftExpression;
+    Expression_Node* rightExpression;
+    Operator_Type operator_Type;
+    Comparation_Expression_Node(Expression_Node* leftExpression, Expression_Node* rightExpression, Operator_Type operator_Type){
+        this->leftExpression = leftExpression;
+        this->rightExpression = rightExpression;
+        this->operator_Type = operator_Type;
+    }
+};
+
+class Array_Expression_Node : public Expression_Node
+{
+public:
+    Expression_Node* leftExpression;
+    Expression_Node* rightExpression;
+    Array_Expression_Node(Expression_Node* leftExpression, Expression_Node* rightExpression){
+        this->leftExpression = leftExpression;
+        this->rightExpression = rightExpression;
+    }
+};
+
+class Call_Expression_Node : public Expression_Node
+{
+public:
+    Expression_Node* expression;
+    Identifier_Node* identifier;
+    std::vector<Expression_Node*>* actuals;
+    Call_Expression_Node(Expression_Node* expression, Identifier_Node* identifier, std::vector<Expression_Node*>* actuals){
+        this->expression = expression;
+        this->identifier = identifier;
+        this->actuals = actuals;
+    }
+};
+
+class Identifier_Expression_Node : public Expression_Node
+{
+public:
+    Identifier_Node* identifier;
+    Identifier_Expression_Node(Identifier_Node* identifier){
+        this->identifier = identifier;
+    }
+};
+
+class Int_Constant_Expression_Node : public Expression_Node
+{
+public:
     int value;
-public:
-    ast_integer_literal_expression(int);
-    int get_value();
-    ~ast_integer_literal_expression()
-    {
-
+    Int_Constant_Expression_Node(int value){
+        this->value = value;
     }
 };
 
-class ast_char_literal_expression : public ast_literal_expression
+class Double_Constant_Expression_Node : public Expression_Node
 {
-    char value;
 public:
-    ast_char_literal_expression(char);
-    char get_value();
-    ~ast_char_literal_expression()
-    {
-
+    double value;
+    Double_Constant_Expression_Node(double value){
+        this->value = value;
     }
 };
 
-class ast_true_literal_expression : public ast_literal_expression
+class Boolean_Constant_Expression_Node : public Expression_Node
 {
 public:
-    ast_true_literal_expression()
-    {
-
-    }
-    bool get_value()
-    {
-      return true;
-    }
-    ~ast_true_literal_expression()
-    {
-
+    bool value;
+    Boolean_Constant_Expression_Node(bool value){
+        this->value = value;
     }
 };
 
-class ast_false_literal_expression : public ast_literal_expression
+class String_Constant_Expression_Node : public Expression_Node
 {
 public:
-    ast_false_literal_expression()
-    {
-
-    }
-    bool get_value()
-    {
-      return false;
-    }
-    ~ast_false_literal_expression()
-    {
-
+    std::string value;
+    String_Constant_Expression_Node(std::string value){
+        this->value = value;
     }
 };
 
-class ast_binary_operation_expression : public ast_expression
+class Null_Constant_Expression_Node : public Expression_Node
 {
-    ast_expression * left;
-    ast_expression * right;
-    bin_op op;
 public:
-    ast_binary_operation_expression(ast_expression *, ast_expression *, bin_op);
-    ast_expression * get_left();
-    ast_expression * get_right();
-    bin_op get_op();
-    ~ast_binary_operation_expression()
-    {
+    Null_Constant_Expression_Node(){}
+};
 
+class ReadInteger_Expression_Node : public Expression_Node
+{
+public:
+    ReadInteger_Expression_Node(){}
+};
+
+class ReadLine_Expression_Node : public Expression_Node
+{
+public:
+    ReadLine_Expression_Node(){}
+};
+
+class New_Expression_Node : public Expression_Node
+{
+public:
+    Identifier_Node* identifier;
+    New_Expression_Node(Identifier_Node* identfier){
+        this->identifier = identifier;
     }
 };
 
-class ast_unary_operation_expression : public ast_expression
+class NewArray_Expression_Node : public Expression_Node
 {
-    ast_expression * expr;
-    un_op op;
 public:
-    ast_unary_operation_expression(ast_expression *, un_op);
-    ast_expression * get_expr();
-    un_op get_op ();
-    ~ast_unary_operation_expression()
-    {
-
+    Expression_Node* expression;
+    Type_Node* type;
+    NewArray_Expression_Node(Expression_Node* identfier, Type_Node* type){
+        this->expression = expression;
+        this->type = type;
     }
+};
+
+class This_Expression_Node : public Expression_Node
+{
+public:
+    This_Expression_Node(){}
 };
 
 #endif

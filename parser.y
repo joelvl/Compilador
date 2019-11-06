@@ -11,7 +11,7 @@ extern "C" void yyerror(char *s);
 extern "C" int yywrap(void){return 1;}
 
 extern union node yylval;
-extern class ast_node * start;
+extern class AST_Node * start;
 %}
 
 %token VOID INT DOUBLE BOOL STRING CLASS INTERFACE _NULL THIS EXTENDS IMPLEMENTS FOR WHILE IF ELSE RETURN BREAK NEW NEWARRAY PRINT READINTEGER READLINE _TRUE _FALSE 
@@ -39,10 +39,10 @@ extern class ast_node * start;
 
 %%  //TERMINALES MAYUS - NO TERMINALES MINUS
 
-program                 :   decls
+program                 :   decls {}
                         ;
 
-decls                   :   decl
+decls                   :   decl {}
                         |   decls decl 
                         ;
 

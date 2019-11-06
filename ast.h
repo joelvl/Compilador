@@ -71,7 +71,46 @@ enum class Operator_Type
 };
 
 union node{
+    AST_Program * program;
+    Declaration_Node * decl;
+    Function_Declaration_Node * functionDecl;
+    Class_Declaration_Node * classDecl;
+    Interface_Declaration_Node * interfaceDecl;
+    Variable_Declaration_Node * variableDecl;
+    Identifier_Node * optExtends;
+    Declaration_Node * field;
+    Prototype_Node * prototype;
+    Statement_Block_Node * stmtBlock;
+    Variable_Declaration_Node * variable;
+    Type_Node * type;
+    Statement_Node * stmt;
+    If_Statement_Node * ifStmt;
+    Statement_Block_Node * optElse;
+    While_Statement_Node * whileStmt;
+    For_Statement_Node * forStmt;
+    Return_Statement_Node * returnStmt;
+    Break_Statement_Node * breakStmt;
+    Print_StateMent_Node * printStmt;
+    Expression_Node * expression;
+    Expression_Node * constant;
+    
+    std::vector<Variable_Declaration_Node*> * optFormals;
+    std::vector<Expression_Node*> * expressionList;
+    std::vector<Expression_Node*> * optActualList;
+    std::vector<Expression_Node*> * actualList;
+    std::vector<Expression_Node*> * actuals;
+    std::vector<Prototype_Node*> * prototypes;
+    std::vector<Statement_Node*> stmts;
+    std::vector<Identifier_Node*> * optImplements;
+    std::vector<Declaration_Node*> * fields;
+    std::vector<Declaration_Node*> * decls;
+    std::vector<Identifier_Node*> * identifiers;
+    std::vector<Variable_Declaration_Node*> * formals;
 
+    int ival;
+    double dval;
+    char cval;
+    char* sval;
 };
 
 
@@ -144,6 +183,15 @@ public:
     }
 };
 
+class Field_Node : public AST_Node
+{
+public:
+    std::vector<Declaration_Node*>* declarations;
+    Field_Node(std::vector<Declaration_Node*>* declarations){
+        this->declarations = declarations;
+    }
+};
+
 class If_Statement_Node : public Statement_Node
 {
 public:
@@ -162,7 +210,7 @@ class While_Statement_Node : public Statement_Node
 public:
     Expression_Node* expression;
     Statement_Block_Node* block;
-    While_Statement_Node(Expression_Node* expression, Statement_Block_Node* if_block){
+    While_Statement_Node(Expression_Node* expression, Statement_Block_Node* block){
         this->expression = expression;
         this->block = block;
     }
@@ -175,7 +223,7 @@ public:
     Expression_Node* expressionB;
     Expression_Node* expressionC;
     Statement_Block_Node* block;
-    For_Statement_Node(Expression_Node* expressiA, Expression_Node* expressiB, Expression_Node* expressionC, Statement_Block_Node* if_block){
+    For_Statement_Node(Expression_Node* expressiA, Expression_Node* expressiB, Expression_Node* expressionC, Statement_Block_Node* block){
         this->expressionA = expressionA;
         this->expressionB = expressionB;
         this->expressionC = expressionC;
@@ -210,12 +258,14 @@ public:
 class Class_Declaration_Node : public Declaration_Node
 {
 public:
-    std::vector<Identifier_Node*> * extends;
+    Identifier_Node * extends;
     std::vector<Identifier_Node*> * implements;
-    Class_Declaration_Node(Identifier_Node* identifier, std::vector<Identifier_Node*> * extends, 
-                std::vector<Identifier_Node*> * implements) : Declaration_Node(identifier){
+    Statement_Block_Node * statementBlock;
+    Class_Declaration_Node(Identifier_Node* identifier, Identifier_Node* extends, 
+                std::vector<Identifier_Node*>* implements, Statement_Block_Node* statementBlock) : Declaration_Node(identifier){
         this->extends = extends;
         this->implements = implements;
+        this->statementBlock = statementBlock;
     }
 };
 
@@ -223,7 +273,7 @@ class Interface_Declaration_Node : public Declaration_Node
 {
 public:
     std::vector<Identifier_Node*> * prototypes;
-    Interface_Declaration_Node(std::vector<Identifier_Node*> * prototypes) : Declaration_Node(identifier){
+    Interface_Declaration_Node(Identifier_Node* identifier, std::vector<Identifier_Node*> * prototypes) : Declaration_Node(identifier){
         this->prototypes = prototypes;
     }
 };
@@ -263,7 +313,7 @@ public:
     }
 };
 
-class Expression_Node : public AST_Node
+class Expression_Node : public Statement_Node
 {
 public:
     Expression_Node(){}

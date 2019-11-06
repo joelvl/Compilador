@@ -27,9 +27,6 @@ int main (const int argc, const char ** argv) {
     std::cout << "\t| Line\t\t| Column\t| Token\t\t\t| Value\t\t|\n";
     std::cout << "        -------------------------------------------------------------------------\n";
     
-    int type;
-    do {
-        type = yylex();
-    } while (type != 0);
+    yyparse();
     return 0;
 }

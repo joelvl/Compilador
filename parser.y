@@ -8,7 +8,7 @@
 extern "C" int yylex();
 extern "C" int yyparse();
 extern "C" void yyerror(char *s);
-extern "C" int yywrap(void){return 1;}
+extern "C" int yywrap(void) {return 1;}
 
 extern union node yylval;
 extern class AST_Node * start;
@@ -24,8 +24,7 @@ extern class AST_Node * start;
 %token <cval> INVALID_CHAR 
 %token <sval> STRING_VALUE
 %token <sval> INVALID_STRING 
-%token <sval> IDENTIFIER 
-
+%token <sval> IDENTIFIER
 %type <program> program
 %type <decls> decls
 %type <decl> decl
@@ -75,7 +74,7 @@ extern class AST_Node * start;
 
 %%  //TERMINALES MAYUS - NO TERMINALES MINUS
 
-program                 :   decls { $$ = new AST_Program($1); }
+program                 :   decls { $$ = new AST_Program($1); std::cout << "Vaya duerma.\n"; }
                         ;
 
 decls                   :   decl { 
@@ -102,15 +101,15 @@ decl                    :   variableDecl {
                             }
                         ;
 
-identifiers             :   IDENTIFIER { $$ = new std::vector<Identifier_Node*> (); $$->push_back($1); }
-                        |   identifiers IDENTIFIER { $1->push_back($2); }
+identifiers             :   IDENTIFIER { $$ = new std::vector<Identifier_Node*> (); $$->push_back(new Identifier_Node(std::string($1))); }
+                        |   identifiers IDENTIFIER { $1->push_back(new Identifier_Node(std::string($2))); $$ = $1; }
                         ;
 
 functionDecl            :   type IDENTIFIER BO optFormals BC stmtBlock { 
-                                $$ = new Function_Declaration_Node($1, new Identifier_Node(std::string($2), $4, $6)); 
+                                $$ = new Function_Declaration_Node($1, new Identifier_Node(std::string($2)), $4, $6); 
                             }
                         |   VOID IDENTIFIER BO optFormals BC stmtBlock { 
-                                $$ = new Function_Declaration_Node(new Type_Node(Datatype::null_type, nullptr), new Identifier_Node(std::string($2), $4, $6)); 
+                                $$ = new Function_Declaration_Node(new Type_Node(Datatype::null_type, nullptr), new Identifier_Node(std::string($2)), $4, $6); 
                             }
                         ;
 
@@ -119,10 +118,12 @@ optFormals              :   { $$ = nullptr; }
                         ;
 
 formals                 :   variable { $$ = new std::vector<Variable_Declaration_Node*>(); $$->push_back($1); }
-                        |   formals COMMA variable { $1->push_back($3); $$ = $3; }
+                        |   formals COMMA variable { $1->push_back($3); $$ = $1; }
                         ;
 
-classDecl               :   CLASS IDENTIFIER optExtends optImplements CBO fields CBC { $$ = new Class_Declaration_Node(new Identifier_Node(std::string($2)), $3, $4, $6); }
+classDecl               :   CLASS IDENTIFIER optExtends optImplements CBO fields CBC { 
+                                $$ = new Class_Declaration_Node(new Identifier_Node(std::string($2)), $3, $4, $6); 
+                            }
                         ;
 
 optExtends              :   EXTENDS IDENTIFIER { $$ = new Identifier_Node(std::string($2)); }
@@ -141,18 +142,24 @@ field                   :   variableDecl { $$ = $1; }
                         |   functionDecl { $$ = $1; }
                         ;
 
-interfaceDecl           :   INTERFACE IDENTIFIER CBO prototypes CBC { $$ = new Interface_Declaration_Node(new Indetifier_Node(std::string($2), $4); }
+interfaceDecl           :   INTERFACE IDENTIFIER CBO prototypes CBC { 
+                                $$ = new Interface_Declaration_Node(new Identifier_Node(std::string($2)), $4); 
+                            }
                         ;
 
 prototypes              :   { $$ = new std::vector<Prototype_Node*>(); }
                         |   prototypes prototype { $1->push_back($2); $$ = $1; }
                         ;
 
-prototype               :   type IDENTIFIER BO formals BC SEMICOLON { $$ = new Prototype_Node($1, new Indetifier_Node(std::string($2), $4); }
-                        |   VOID IDENTIFIER BO formals BC SEMICOLON { $$ = new Prototype_Node(nullptr, new Indetifier_Node(std::string($2), $4); }
+prototype               :   type IDENTIFIER BO formals BC SEMICOLON { 
+                                $$ = new Prototype_Node($1, new Identifier_Node(std::string($2)), $4); 
+                            }
+                        |   VOID IDENTIFIER BO formals BC SEMICOLON { 
+                                $$ = new Prototype_Node(nullptr, new Identifier_Node(std::string($2)), $4); 
+                            }
                         ;
 
-stmts                   :   { $$ = new std::vector<Statement_Node*>(); } 
+stmts                   :   { $$ = new std::vector<AST_Node*>(); } 
                         |   stmts stmt { $1->push_back($2); $$ = $1; }
                         |   stmts variableDecl { $1->push_back($2); $$ = $1; }
                         ;
@@ -174,8 +181,8 @@ type                    :   INT { $$ = new Type_Node(Datatype::int_type, nullptr
                         |   DOUBLE { $$ = new Type_Node(Datatype::double_type, nullptr); }
                         |   BOOL { $$ = new Type_Node(Datatype::bool_type, nullptr); }
                         |   STRING { $$ = new Type_Node(Datatype::string_type, nullptr); }
-                        |   IDENTIFIER { $$ = new Type_Node(Datatype::idetifier_type, new Identifier_Node(std::string($1))); }
-                        |   type SBO SBC { $$ = $1 }
+                        |   IDENTIFIER { $$ = new Type_Node(Datatype::identifier_type, new Identifier_Node(std::string($1))); }
+                        |   type SBO SBC { $$ = $1; }
                         ;
 
 stmt                    :   ifStmt { $$ = $1; }
@@ -232,8 +239,8 @@ expression              :   expression OR expression { $$ = new Comparation_Expr
                         |   NOT expression { $$ = new Comparation_Expression_Node($2, nullptr, Operator_Type::NOT); }
                         |   MINUS expression { $$ = new Comparation_Expression_Node($2, nullptr, Operator_Type::MINUS); }
                         |   expression SBO expression SBC { $$ = new Array_Expression_Node($1, $3); }
-                        |   expression DOT IDENTIFIER optActualList { $$ = new Call_Expression_Node($1, $3, $4); }
-                        |   IDENTIFIER { $$ = new Identifier_Expression_Node($1); }
+                        |   expression DOT IDENTIFIER optActualList { $$ = new Call_Expression_Node($1, new Identifier_Node(std::string($3)), $4); }
+                        |   IDENTIFIER { $$ = new Identifier_Expression_Node(new Identifier_Node(std::string($1))); }
                         |   constant { $$ = $1; }
                         |   READINTEGER BO BC { $$ = new ReadInteger_Expression_Node(); }
                         |   READLINE BO BC { $$ = new ReadLine_Expression_Node(); }
@@ -257,10 +264,15 @@ actuals                 :   expression { $$ = new std::vector<Expression_Node*>(
 
 constant                :   INT_VALUE { $$ = new Int_Constant_Expression_Node($1); }
                         |   DOUBLE_VALUE { $$ = new Double_Constant_Expression_Node($1); }
-                        |   _TRUE { $$ = new Boolen_Constant_Expression_Node(true); }
-                        |   _FALSE { $$ = new Boolen_Constant_Expression_Node(false); }
+                        |   _TRUE { $$ = new Boolean_Constant_Expression_Node(true); }
+                        |   _FALSE { $$ = new Boolean_Constant_Expression_Node(false); }
                         |   STRING_VALUE { $$ = new String_Constant_Expression_Node($1); }
                         |   _NULL { $$ = new Null_Constant_Expression_Node(); }
                         ;
 
 %%
+
+void yyerror(char *s)
+{
+	fprintf(stderr, "error: %s\n", s);
+}

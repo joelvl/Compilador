@@ -18,7 +18,7 @@ class If_Statement_Node;
 class While_Statement_Node;
 class For_Statement_Node;
 class Break_Statement_Node;
-class Print_StateMent_Node;
+class Print_Statement_Node;
 class Return_Statement_Node;
 class Class_Declaration_Node;
 class Interface_Declaration_Node;
@@ -70,7 +70,10 @@ enum class Operator_Type
     NOT
 };
 
-union node{
+union node
+{
+    Datatype dataType;
+    Operator_Type operator_type;
     AST_Program * program;
     Declaration_Node * decl;
     Function_Declaration_Node * functionDecl;
@@ -90,7 +93,7 @@ union node{
     For_Statement_Node * forStmt;
     Return_Statement_Node * returnStmt;
     Break_Statement_Node * breakStmt;
-    Print_StateMent_Node * printStmt;
+    Print_Statement_Node * printStmt;
     Expression_Node * expression;
     Expression_Node * constant;
     
@@ -100,7 +103,7 @@ union node{
     std::vector<Expression_Node*> * actualList;
     std::vector<Expression_Node*> * actuals;
     std::vector<Prototype_Node*> * prototypes;
-    std::vector<Statement_Node*> stmts;
+    std::vector<AST_Node*> * stmts;
     std::vector<Identifier_Node*> * optImplements;
     std::vector<Declaration_Node*> * fields;
     std::vector<Declaration_Node*> * decls;
@@ -112,8 +115,6 @@ union node{
     char cval;
     char* sval;
 };
-
-
 typedef union node YYSTYPE;
 #define YYSTYPE_IS_DECLARED 1
 
@@ -174,21 +175,12 @@ public:
     Statement_Node(){}
 };
 
-class Statement_Block_Node : public AST_Node
+class Statement_Block_Node : public Statement_Node
 {
 public:
-    std::vector<Statement_Node* >* statements;
-    Statement_Block_Node(std::vector<Statement_Node* >* statements){
+    std::vector<AST_Node* >* statements;
+    Statement_Block_Node(std::vector<AST_Node* >* statements){
         this->statements = statements;
-    }
-};
-
-class Field_Node : public AST_Node
-{
-public:
-    std::vector<Declaration_Node*>* declarations;
-    Field_Node(std::vector<Declaration_Node*>* declarations){
-        this->declarations = declarations;
     }
 };
 
@@ -234,14 +226,14 @@ public:
 class Break_Statement_Node : public Statement_Node
 {
 public:
-    Break_Statement_Node();
+    Break_Statement_Node(){};
 };
 
-class Print_StateMent_Node : public Statement_Node
+class Print_Statement_Node : public Statement_Node
 {
 public:
     std::vector<Expression_Node*> * expressions;
-    Print_StateMent_Node(std::vector<Expression_Node*> * expressions){
+    Print_Statement_Node(std::vector<Expression_Node*> * expressions){
         this->expressions = expressions;
     }
 };
@@ -260,20 +252,20 @@ class Class_Declaration_Node : public Declaration_Node
 public:
     Identifier_Node * extends;
     std::vector<Identifier_Node*> * implements;
-    Statement_Block_Node * statementBlock;
+    std::vector<Declaration_Node*>* field;
     Class_Declaration_Node(Identifier_Node* identifier, Identifier_Node* extends, 
-                std::vector<Identifier_Node*>* implements, Statement_Block_Node* statementBlock) : Declaration_Node(identifier){
+                std::vector<Identifier_Node*>* implements, std::vector<Declaration_Node*>* field) : Declaration_Node(identifier){
         this->extends = extends;
         this->implements = implements;
-        this->statementBlock = statementBlock;
+        this->field = field;
     }
 };
 
 class Interface_Declaration_Node : public Declaration_Node
 {
 public:
-    std::vector<Identifier_Node*> * prototypes;
-    Interface_Declaration_Node(Identifier_Node* identifier, std::vector<Identifier_Node*> * prototypes) : Declaration_Node(identifier){
+    std::vector<Prototype_Node*> * prototypes;
+    Interface_Declaration_Node(Identifier_Node* identifier, std::vector<Prototype_Node*> * prototypes) : Declaration_Node(identifier){
         this->prototypes = prototypes;
     }
 };
@@ -293,8 +285,8 @@ public:
 class Identifier_Node : AST_Node
 {
 public:
-    Identifier_Node* identifier;
-    Identifier_Node(Identifier_Node* identifier){
+    std::string identifier;
+    Identifier_Node(std::string identifier){
         this->identifier = identifier;
     }
 };

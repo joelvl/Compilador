@@ -8,7 +8,7 @@ extern "C" int yylex();
 extern "C" FILE *yyin;
 extern "C" int yyparse();
 
-ast_program * start;
+AST_Program * start;
 
 int main (const int argc, const char ** argv) {
     if (argc < 2) {
@@ -27,9 +27,6 @@ int main (const int argc, const char ** argv) {
     std::cout << "\t| Line\t\t| Column\t| Token\t\t\t| Value\t\t|\n";
     std::cout << "        -------------------------------------------------------------------------\n";
     
-    int type;
-    do {
-        type = yylex();
-    } while (type != 0);
+    yyparse();
     return 0;
 }

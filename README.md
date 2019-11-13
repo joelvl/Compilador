@@ -8,6 +8,7 @@
 - ast.cpp: contiene todas las funciones de las clases, excepto las declaraciones, clases relacionadas con los métodos necesarias para AST.
 - main.cpp: inicia el proceso de análisis del programa.
 
+
 **Pasos para ejecutar**
 - Para compilar el código, use el comando 'make'.
 - Para ejecutar el compilador en el archivo use el comando ` ./parser input.dcf`
@@ -32,4 +33,7 @@
 
 # AST
 
-- Genera AST
+- Make
+- ./parser *archivo*
+
+

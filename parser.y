@@ -152,34 +152,43 @@ optExtends
         $$ = new Identifier_Node(std::string($2)); 
     }
     | { 
-        $$ = nullptr; }
-    ;
+        $$ = nullptr; 
+    };
 
 optImplements
-    : IMPLEMENTS identifiers { $$ = $2; }
-    | { $$ = nullptr; }
-    ;
+    : IMPLEMENTS identifiers { 
+        $$ = $2; 
+    }
+    | { 
+        $$ = nullptr; 
+    };
 
 fields
-    : { $$ = new std::vector<Declaration_Node*>(); }
-    | fields field { $1->push_back($2); $$ = $1; }
-    ;
+    : { 
+        $$ = new std::vector<Declaration_Node*>(); 
+    }
+    | fields field { $1->push_back($2); $$ = $1; 
+    };
 
 field
-    : variableDecl { $$ = $1; }
-    | functionDecl { $$ = $1; }
-    ;
+    : variableDecl { 
+        $$ = $1; 
+    }
+    | functionDecl { 
+        $$ = $1; 
+    };
 
 interfaceDecl
     : INTERFACE IDENTIFIER CBO prototypes CBC { 
             $$ = new Interface_Declaration_Node(new Identifier_Node(std::string($2)), $4); 
-        }
-    ;
+        };
 
 prototypes
-    : { $$ = new std::vector<Prototype_Node*>(); }
-    | prototypes prototype { $1->push_back($2); $$ = $1; }
-    ;
+    : { 
+        $$ = new std::vector<Prototype_Node*>(); 
+    }
+    | prototypes prototype { $1->push_back($2); $$ = $1; 
+    };
 
 prototype
     : type IDENTIFIER BO formals BC SEMICOLON { 
@@ -187,30 +196,30 @@ prototype
         }
     | VOID IDENTIFIER BO formals BC SEMICOLON { 
             $$ = new Prototype_Node(nullptr, new Identifier_Node(std::string($2)), $4); 
-        }
-    ;
+        };
 
 stmts
-    : { $$ = new std::vector<AST_Node*>(); } 
-    | stmts stmt { $1->push_back($2); $$ = $1; }
-    | stmts variableDecl { $1->push_back($2); $$ = $1; }
-    ;
+    : { 
+        $$ = new std::vector<AST_Node*>(); } 
+    | stmts stmt { $1->push_back($2); $$ = $1; 
+    }
+    | stmts variableDecl { $1->push_back($2); $$ = $1; 
+    };
 
 stmtBlock
-    : CBO stmts CBC { $$ = new Statement_Block_Node($2); }
-    ;
+    : CBO stmts CBC { 
+        $$ = new Statement_Block_Node($2); 
+    };
 
 variableDecl
     : variable SEMICOLON {
             $$ = $1;
-        }
-    ;
+        };
 
 variable
     : type IDENTIFIER {
             $$ = new Variable_Declaration_Node($1, new Identifier_Node(std::string($2)));
-        }
-    ;
+        };
 
 type
     : INT {
@@ -230,44 +239,66 @@ type
     }
     | type SBO SBC { 
         $$ = $1;
-    }
-    ;
+    };
 
 stmt
-    : ifStmt { $$ = $1; }
-    | expression SEMICOLON { $$ = $1; }
-    | whileStmt { $$ = $1; }
-    | forStmt { $$ = $1; }
-    | breakStmt { $$ = $1; }
-    | returnStmt { $$ = $1; }
-    | printStmt { $$ = $1; }
-    | stmtBlock { $$ = $1; }
-    ;
+    : ifStmt { 
+        $$ = $1; 
+    }
+    | expression SEMICOLON { 
+        $$ = $1; 
+    }
+    | whileStmt { 
+        $$ = $1; 
+    }
+    | forStmt { 
+        $$ = $1; 
+    }
+    | breakStmt { 
+        $$ = $1; 
+    }
+    | returnStmt { 
+        $$ = $1; 
+    }
+    | printStmt { 
+        $$ = $1; 
+    }
+    | stmtBlock { 
+        $$ = $1; 
+    };
 
 ifStmt
-    : IF BO expression BC stmtBlock optElse { $$ = new If_Statement_Node($3, $5, $6); }
-    ;
+    : IF BO expression BC stmtBlock optElse { 
+        $$ = new If_Statement_Node($3, $5, $6); 
+    };
 
 optElse
-    : { $$ = nullptr; }
-    | ELSE stmtBlock { $$ = $2; }
-    ;
+    : { 
+        $$ = nullptr; 
+    }
+    | ELSE stmtBlock { 
+        $$ = $2; 
+    };
 
 whileStmt
-    : WHILE BO expression BC stmtBlock { $$ = new While_Statement_Node($3, $5); }
-    ;
+    : WHILE BO expression BC stmtBlock { 
+        $$ = new While_Statement_Node($3, $5); 
+    };
 
 forStmt
-    : FOR BO expression SEMICOLON expression SEMICOLON expression BC stmtBlock {  $$ = new For_Statement_Node($3, $5, $7, $9); }
-    ;
+    : FOR BO expression SEMICOLON expression SEMICOLON expression BC stmtBlock {
+        $$ = new For_Statement_Node($3, $5, $7, $9); 
+    };
     
 returnStmt
-    : RETURN expression SEMICOLON { $$ = new Return_Statement_Node($2); }
-    ;
+    : RETURN expression SEMICOLON { 
+        $$ = new Return_Statement_Node($2); 
+    };
 
 breakStmt
-    : BREAK SEMICOLON { $$ = new Break_Statement_Node(); }
-    ;
+    : BREAK SEMICOLON { 
+        $$ = new Break_Statement_Node(); 
+    };
     
 printStmt
     : PRINT BO expressionList BC SEMICOLON {
@@ -275,9 +306,11 @@ printStmt
     };
 
 expressionList
-    : expression { $$ = new std::vector<Expression_Node*>(); $$->push_back($1); }
-    | expressionList COMMA expression { $1->push_back($3); $$ = $1; }
-    ;
+    : expression { 
+        $$ = new std::vector<Expression_Node*>(); $$->push_back($1); 
+    }
+    | expressionList COMMA expression { $1->push_back($3); $$ = $1; 
+    };
 
 
 expression
@@ -287,46 +320,103 @@ expression
     | expression AND expression { 
         $$ = new Comparation_Expression_Node($1, $3, Operator_Type::AND); 
     }
-    | expression EQUALEQUAL expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::EQUALEQUAL); }
-    | expression NOTEQUAL expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::NOTEQUAL); }
-    | expression LESS expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::LESS); }
-    | expression LESSEQUAL expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::LESSEQUAL); }
-    | expression GREATER expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::GREATER); }
-    | expression GREATEREQUAL expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::GREATEREQUAL); }
-    | expression PLUS expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::PLUS); }
-    | expression MINUS expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::MINUS); }
-    | expression MUL expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::MUL); }
-    | expression DIV expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::DIV); }
-    | expression MOD expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::MOD); }
-    | expression EQUAL expression { $$ = new Comparation_Expression_Node($1, $3, Operator_Type::EQUAL); }
-    | NOT expression { $$ = new Comparation_Expression_Node($2, nullptr, Operator_Type::NOT); }
-    | MINUS expression { $$ = new Comparation_Expression_Node($2, nullptr, Operator_Type::MINUS); }
-    | expression SBO expression SBC { $$ = new Array_Expression_Node($1, $3); }
-    | expression DOT IDENTIFIER optActualList { $$ = new Call_Expression_Node($1, new Identifier_Node(std::string($3)), $4); }
-    | IDENTIFIER { $$ = new Identifier_Expression_Node(new Identifier_Node(std::string($1))); }
-    | constant { $$ = $1; }
-    | READINTEGER BO BC { $$ = new ReadInteger_Expression_Node(); }
-    | READLINE BO BC { $$ = new ReadLine_Expression_Node(); }
-    | NEW BO IDENTIFIER BC { $$ = new New_Expression_Node(new Identifier_Node(std::string($3))); }
-    | NEWARRAY BO expression COMMA type BC { $$ = new NewArray_Expression_Node($3, $5); }
-    | THIS { $$ = new This_Expression_Node(); } 
-    | BO expression BC { $$ = $2; }
-    ;
+    | expression EQUALEQUAL expression {
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::EQUALEQUAL); 
+    }
+    | expression NOTEQUAL expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::NOTEQUAL); 
+    }
+    | expression LESS expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::LESS); 
+    }
+    | expression LESSEQUAL expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::LESSEQUAL); 
+    }
+    | expression GREATER expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::GREATER); 
+    }
+    | expression GREATEREQUAL expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::GREATEREQUAL); 
+    }
+    | expression PLUS expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::PLUS); 
+    }
+    | expression MINUS expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::MINUS); 
+    }
+    | expression MUL expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::MUL); 
+    }
+    | expression DIV expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::DIV); 
+    }
+    | expression MOD expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::MOD); 
+    }
+    | expression EQUAL expression { 
+        $$ = new Comparation_Expression_Node($1, $3, Operator_Type::EQUAL); 
+    }
+    | NOT expression { 
+        $$ = new Comparation_Expression_Node($2, nullptr, Operator_Type::NOT); 
+    }
+    | MINUS expression { 
+        $$ = new Comparation_Expression_Node($2, nullptr, Operator_Type::MINUS); 
+    }
+    | expression SBO expression SBC { 
+        $$ = new Array_Expression_Node($1, $3); 
+    }
+    | expression DOT IDENTIFIER optActualList { 
+        $$ = new Call_Expression_Node($1, new Identifier_Node(std::string($3)), $4); 
+    }
+    | IDENTIFIER { 
+        $$ = new Identifier_Expression_Node(new Identifier_Node(std::string($1))); 
+    }
+    | constant { 
+        $$ = $1; 
+    }
+    | READINTEGER BO BC { 
+        $$ = new ReadInteger_Expression_Node(); 
+    }
+    | READLINE BO BC { 
+        $$ = new ReadLine_Expression_Node(); 
+    }
+    | NEW BO IDENTIFIER BC { 
+        $$ = new New_Expression_Node(new Identifier_Node(std::string($3))); 
+    }
+    | NEWARRAY BO expression COMMA type BC { 
+        $$ = new NewArray_Expression_Node($3, $5); 
+    }
+    | THIS { 
+        $$ = new This_Expression_Node(); } 
+    | BO expression BC { 
+        $$ = $2; 
+    };
 
 optActualList
-    : { $$ = nullptr; }
-    | BO actualList BC { $$ = $2; }
-    ;
+    : { 
+        $$ = nullptr;
+    }
+    | BO actualList BC { 
+        $$ = $2;
+    };
 
 actualList
-    : actuals { $$ = $1; }
-    | { $$ = nullptr; }
-    ;
+    : actuals { 
+        $$ = $1; 
+    }
+    | { 
+        $$ = nullptr; 
+    };
 
 actuals
-    : expression { $$ = new std::vector<Expression_Node*>(); $$->push_back($1); }
-    | actuals COMMA expression { $1->push_back($3); $$ = $1; }
-    ;
+    : expression { 
+        $$ = new std::vector<Expression_Node*>();
+        $$->push_back($1); 
+    }
+    | actuals COMMA expression { 
+        $1->push_back($3);
+        $$ = $1;
+    };
 
 constant
     : INT_VALUE { 
@@ -344,8 +434,9 @@ constant
     | STRING_VALUE {
         $$ = new String_Constant_Expression_Node(std::string($1));
     }
-    | _NULL { $$ = new Null_Constant_Expression_Node(); }
-    ;
+    | _NULL { 
+        $$ = new Null_Constant_Expression_Node(); 
+    };
 
 %%
 

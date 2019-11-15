@@ -140,7 +140,6 @@ class Declaration_Node : public AST_Node
 public:
     Identifier_Node *identifier;
     Declaration_Node(Identifier_Node *identifier);
-    virtual void print(int depth);
 };
 
 
@@ -206,6 +205,7 @@ class Statement_Block_Node : public Statement_Node
 public:
     std::vector<AST_Node *> *statements;
     Statement_Block_Node(std::vector<AST_Node *> *statements);
+    virtual void print(int depth);
 };
 
 
@@ -216,6 +216,7 @@ public:
     Statement_Block_Node *if_block;
     Statement_Block_Node *else_block;
     If_Statement_Node(Expression_Node *expression, Statement_Block_Node *if_block, Statement_Block_Node *else_block);
+    virtual void print(int depth);
 };
 
 
@@ -225,6 +226,7 @@ public:
     Expression_Node *expression;
     Statement_Block_Node *block;
     While_Statement_Node(Expression_Node *expression, Statement_Block_Node *block);
+    virtual void print(int depth);
 };
 
 
@@ -236,6 +238,7 @@ public:
     Expression_Node *expressionC;
     Statement_Block_Node *block;
     For_Statement_Node(Expression_Node *expressiA, Expression_Node *expressiB, Expression_Node *expressionC, Statement_Block_Node *block);
+    virtual void print(int depth);
 };
 
 
@@ -243,6 +246,7 @@ class Break_Statement_Node : public Statement_Node
 {
 public:
     Break_Statement_Node();
+    virtual void print(int depth);
 };
 
 
@@ -251,6 +255,7 @@ class Print_Statement_Node : public Statement_Node
 public:
     std::vector<Expression_Node *> *expressions;
     Print_Statement_Node(std::vector<Expression_Node *> *expressions);
+    virtual void print(int depth);
 };
 
 
@@ -259,6 +264,7 @@ class Return_Statement_Node : public Statement_Node
 public:
     Expression_Node *expression;
     Return_Statement_Node(Expression_Node *expression);
+    virtual void print(int depth);
 };
 
 
@@ -267,6 +273,7 @@ class Identifier_Node : AST_Node
 public:
     std::string identifier;
     Identifier_Node(std::string identifier);
+    virtual void print(int depth);
 };
 
 
@@ -277,6 +284,7 @@ public:
     Identifier_Node *identifier;
     Type_Node(Datatype type);
     Type_Node(Datatype type, Identifier_Node *identifier);
+    virtual void print(int depth);
 };
 
 
@@ -294,6 +302,7 @@ public:
     Expression_Node *rightExpression;
     Operator_Type operator_Type;
     Comparation_Expression_Node(Expression_Node *leftExpression, Expression_Node *rightExpression, Operator_Type operator_Type);
+    virtual void print(int depth);
 };
 
 
@@ -303,6 +312,7 @@ public:
     Expression_Node *leftExpression;
     Expression_Node *rightExpression;
     Array_Expression_Node(Expression_Node *leftExpression, Expression_Node *rightExpression);
+    virtual void print(int depth);
 };
 
 
@@ -313,6 +323,7 @@ public:
     Identifier_Node *identifier;
     std::vector<Expression_Node *> *actuals;
     Call_Expression_Node(Expression_Node *expression, Identifier_Node *identifier, std::vector<Expression_Node *> *actuals);
+    virtual void print(int depth);
 };
 
 
@@ -321,6 +332,7 @@ class Identifier_Expression_Node : public Expression_Node
 public:
     Identifier_Node *identifier;
     Identifier_Expression_Node(Identifier_Node *identifier);
+    virtual void print(int depth);
 };
 
 
@@ -329,6 +341,7 @@ class Int_Constant_Expression_Node : public Expression_Node
 public:
     int value;
     Int_Constant_Expression_Node(int value);
+    virtual void print(int depth);
 };
 
 
@@ -337,6 +350,7 @@ class Double_Constant_Expression_Node : public Expression_Node
 public:
     double value;
     Double_Constant_Expression_Node(double value);
+    virtual void print(int depth);
 };
 
 
@@ -345,6 +359,7 @@ class Boolean_Constant_Expression_Node : public Expression_Node
 public:
     bool value;
     Boolean_Constant_Expression_Node(bool value);
+    virtual void print(int depth);
 };
 
 
@@ -353,6 +368,7 @@ class String_Constant_Expression_Node : public Expression_Node
 public:
     std::string value;
     String_Constant_Expression_Node(std::string value);
+    virtual void print(int depth);
 };
 
 
@@ -360,6 +376,7 @@ class Null_Constant_Expression_Node : public Expression_Node
 {
 public:
     Null_Constant_Expression_Node();
+    virtual void print(int depth);
 };
 
 
@@ -367,6 +384,7 @@ class ReadInteger_Expression_Node : public Expression_Node
 {
 public:
     ReadInteger_Expression_Node();
+    virtual void print(int depth);
 };
 
 
@@ -374,6 +392,7 @@ class ReadLine_Expression_Node : public Expression_Node
 {
 public:
     ReadLine_Expression_Node();
+    virtual void print(int depth);
 };
 
 
@@ -382,6 +401,7 @@ class New_Expression_Node : public Expression_Node
 public:
     Identifier_Node *identifier;
     New_Expression_Node(Identifier_Node *identfier);
+    virtual void print(int depth);
 };
 
 
@@ -391,6 +411,7 @@ public:
     Expression_Node *expression;
     Type_Node *type;
     NewArray_Expression_Node(Expression_Node *identfier, Type_Node *type);
+    virtual void print(int depth);
 };
 
 
@@ -398,6 +419,7 @@ class This_Expression_Node : public Expression_Node
 {
 public:
     This_Expression_Node();
+    virtual void print(int depth);
 };
 
 

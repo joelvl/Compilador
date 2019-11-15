@@ -1352,22 +1352,26 @@ case 52:
 YY_RULE_SETUP
 #line 257 "scanner.l"
 {
+    yylval.ival = strtol(yytext, 0, 16);
     printToken(yylineno, yyleng, "INT_VALUE", strdup(yytext));
     return INT_VALUE;
 }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 261 "scanner.l"
+#line 262 "scanner.l"
 {
+    yylval.ival = strtol(yytext, 0, 10);
     printToken(yylineno, yyleng, "INT_VALUE", strdup(yytext));
     return INT_VALUE; 
 }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 265 "scanner.l"
+#line 267 "scanner.l"
 {
+    char *ptr;
+    yylval.dval = strtod(yytext, &ptr);
     printToken(yylineno, yyleng, "DOUBLE_VALUE", strdup(yytext));
     return DOUBLE_VALUE;
 }
@@ -1375,7 +1379,7 @@ YY_RULE_SETUP
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 269 "scanner.l"
+#line 273 "scanner.l"
 {
     yylval.sval = strdup(yytext);
     printToken(yylineno, yyleng, "STRING_VALUE", strdup(yytext));
@@ -1385,7 +1389,7 @@ YY_RULE_SETUP
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 275 "scanner.l"
+#line 279 "scanner.l"
 {
     printStringError(yylineno, yyleng);
     return INVALID_STRING;
@@ -1394,7 +1398,7 @@ YY_RULE_SETUP
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
-#line 279 "scanner.l"
+#line 283 "scanner.l"
 {
     yylval.sval = strdup(yytext);
     printToken(yylineno, yyleng, "CHAR_VALUE", strdup(yytext));
@@ -1404,7 +1408,7 @@ YY_RULE_SETUP
 case 58:
 /* rule 58 can match eol */
 YY_RULE_SETUP
-#line 284 "scanner.l"
+#line 288 "scanner.l"
 {
     printError(yylineno, yyleng, strdup(yytext));
     return INVALID_STRING;
@@ -1413,7 +1417,7 @@ YY_RULE_SETUP
 case 59:
 /* rule 59 can match eol */
 YY_RULE_SETUP
-#line 288 "scanner.l"
+#line 292 "scanner.l"
 {
     printStringError(yylineno, yyleng);
     return INVALID_STRING;
@@ -1422,7 +1426,7 @@ YY_RULE_SETUP
 case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
-#line 292 "scanner.l"
+#line 296 "scanner.l"
 {
     printError(yylineno, yyleng, strdup(yytext));
     return INVALID_CHAR;
@@ -1430,7 +1434,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 297 "scanner.l"
+#line 301 "scanner.l"
 {
     yylval.sval = strdup(yytext);
     printToken(yylineno, yyleng, "IDENTIFIER", strdup(yytext));
@@ -1439,7 +1443,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 302 "scanner.l"
+#line 306 "scanner.l"
 {
     column+=yyleng;
 }
@@ -1447,7 +1451,7 @@ YY_RULE_SETUP
 /* OTHER */
 case 63:
 YY_RULE_SETUP
-#line 309 "scanner.l"
+#line 313 "scanner.l"
 {
     printError(yylineno, yyleng, strdup(yytext));
     return INVALID_CHAR;
@@ -1455,10 +1459,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 314 "scanner.l"
+#line 318 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1462 "lex.yy.c"
+#line 1466 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2475,7 +2479,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 314 "scanner.l"
+#line 318 "scanner.l"
 
 
 void printNSpaces(int n){

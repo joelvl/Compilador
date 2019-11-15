@@ -254,10 +254,12 @@ false {
     /*  VALUES  */
 
 {HEXNUM} {
+    yylval.ival = strtol(yytext, 0, 16);
     printToken(yylineno, yyleng, "INT_VALUE", strdup(yytext));
     return INT_VALUE;
 }
 {DECNUM} {
+    yylval.ival = strtol(yytext, 0, 10);
     printToken(yylineno, yyleng, "INT_VALUE", strdup(yytext));
     return INT_VALUE; 
 }

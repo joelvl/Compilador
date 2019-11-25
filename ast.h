@@ -43,6 +43,10 @@ class NewArray_Expression_Node;
 class This_Expression_Node;
 
 class Declaration;
+class Variable_Declaration;
+class Function_Declaration;
+class Class_Declaration;
+class Interface_Declaration;
 
 extern ScopeStack<Declaration> scopes;
 
@@ -133,7 +137,9 @@ class AST_Node
 {
     int line, column;
     int scope;
-    Declaration* parent;
+    Class_Declaration* parentClass;
+    Interface_Declaration* parentInterface;
+    Function_Declaration* parentFunction;
 public:
     std::string depthSpacing(int depth);
     AST_Node();
@@ -144,8 +150,12 @@ public:
     void printPos();
     virtual void checkSemantic();
     virtual void print(int depth);
-    void setParent(Declaration* parent);
-    Declaration* getParent();
+    void setParentClass(Class_Declaration* parent);
+    Class_Declaration* getParentClass();
+    void setParentInterface(Interface_Declaration* parent);
+    Interface_Declaration* getParentInterface();
+    void setParentFunction(Function_Declaration* parent);
+    Function_Declaration* getParentFunction();
 };
 
 class AST_Program : public AST_Node
@@ -168,9 +178,11 @@ class Variable_Declaration_Node : public Declaration_Node
 {
 public:
     Type_Node *type_node;
+    bool classAtribute;
     Variable_Declaration_Node(Type_Node *type_node, Identifier_Node *identifier);
     virtual void checkSemantic();
     virtual void print(int depth);
+    void setAsClassAtribute();
 };
 
 class Function_Declaration_Node : public Declaration_Node
@@ -286,8 +298,7 @@ public:
     Expression_Node *expression;
     Return_Statement_Node(Expression_Node *expression);
     virtual void print(int depth);
-    virtual Type_Node getType();
-    
+    virtual void checkSemantic();
 };
 
 class Identifier_Node : public AST_Node

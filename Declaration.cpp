@@ -47,6 +47,31 @@ void Function_Declaration::addParameter(Type_Node* type)
     parameterTypes.push_back(type);
 }
 
+bool Function_Declaration::checkParameters(std::vector<Type_Node*> parameterTypes)
+{
+    if (parameterTypes.size() == this->parameterTypes.size())
+    {
+        for (int i = 0; i < this->parameterTypes.size(); i++)
+        {
+            if (!parameterTypes[i]->convertible(*this->parameterTypes[i]))
+            {
+                return false;
+            }
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void Function_Declaration::setValidReturn(){
+    this->validReturn = true;
+}
+
+bool Function_Declaration::getValidReturn(){
+    return this->validReturn;
+}
+
 //Class_Declaration
 Class_Declaration::Class_Declaration(std::string identifier)
     : Declaration(DeclarationType::CLASS_DECLARATION, identifier)
@@ -62,18 +87,12 @@ bool Class_Declaration::hasFunction(std::string identifier, Type_Node *returnTyp
 {
     for (Function_Declaration* function : functions)
     {
-        if (function->identifier == identifier && function->type->type == returnType->type && parameterTypes.size() == function->parameterTypes.size())
+        if (function->identifier == identifier && function->type->type == returnType->type)
         {
-            for (int i = 0; i < function->parameterTypes.size(); i++)
-            {
-                if (!parameterTypes[i]->convertible(*function->parameterTypes[i]))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return function->checkParameters(parameterTypes);
         }
     }
+    return false;
 }
 
 Type_Node* Class_Declaration::getFunction(std::string identifier, std::vector<Type_Node*> parameterTypes)
@@ -82,21 +101,45 @@ Type_Node* Class_Declaration::getFunction(std::string identifier, std::vector<Ty
     while (clazz){
         for (Function_Declaration* function : clazz->functions)
         {
-            if (function->identifier == identifier && parameterTypes.size() == function->parameterTypes.size())
-            {   
-                bool validParameters = true;
-                for (int i = 0; i < function->parameterTypes.size(); i++)
-                {
-                    if (!parameterTypes[i]->convertible(*function->parameterTypes[i]))
-                    {
-                        validParameters = false;
-                        break;
-                    }
-                }
-                if (validParameters)
+            if (function->identifier == identifier)
+            {
+                if (function->checkParameters(parameterTypes))
                     return function->getType();
                 else 
                     return nullptr;
+            }
+        }
+        clazz = clazz->extends;
+    }
+    return nullptr;
+}
+
+void Class_Declaration::addVariable(Variable_Declaration* variable)
+{
+    variables.push_back(variable);
+}
+
+bool Class_Declaration::hasVariable(std::string identifier, Type_Node *type)
+{
+    for (Variable_Declaration* variable : variables)
+    {
+        if (variable->identifier == identifier && variable->type->type == type->type)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+Type_Node* Class_Declaration::getVariable(std::string identifier)
+{
+    Class_Declaration* clazz = this;
+    while (clazz){
+        for (Variable_Declaration* variable : clazz->variables)
+        {
+            if (variable->identifier == identifier)
+            {   
+                return variable->getType();
             }
         }
         clazz = clazz->extends;

@@ -10,6 +10,7 @@ class Type_Node;
 class Declaration;
 class Variable_Declaration;
 class Function_Declaration;
+class Class_Declaration;
 class Interface_Declaration;
 
 enum DeclarationType
@@ -45,19 +46,30 @@ class Function_Declaration : public Declaration
 {
 public:
     std::vector<Type_Node*> parameterTypes;
+    bool validReturn;
     Function_Declaration(Type_Node *returnType, std::string identifier);
     void addParameter(Type_Node* type);
+    bool checkParameters(std::vector<Type_Node*> parameterTypes);
+    void setValidReturn();
+    bool getValidReturn();
 };
 class Class_Declaration : public Declaration
 {
 public:
     std::vector<Function_Declaration*> functions;
+    std::vector<Variable_Declaration*> variables;
     std::vector<Interface_Declaration*> implements;
     Class_Declaration* extends;
     Class_Declaration(std::string identifier);
+
     virtual void addFunction(Function_Declaration* function);
     bool hasFunction(std::string identifier, Type_Node *returnType, std::vector<Type_Node*> parameterTypes);
     Type_Node* getFunction(std::string identifier, std::vector<Type_Node*> parameterTypes);
+
+    virtual void addVariable(Variable_Declaration* Variable);
+    bool hasVariable(std::string identifier, Type_Node *type);
+    Type_Node* getVariable(std::string identifier);
+
     void addImplement(Interface_Declaration* interface);
     void setExtends(Class_Declaration* extendedClass);
     Class_Declaration* getExtends();

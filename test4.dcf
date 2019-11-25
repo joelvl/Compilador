@@ -1,0 +1,19 @@
+class aer {
+    int count;
+    string main (){
+        bool a;
+        if (a){
+            if (a){
+                return "qe";
+            }
+        } else {
+            return "asd";
+        }
+    }
+}
+class arr{
+    void qwe(){
+        aer a;
+        a.count;
+    }
+}

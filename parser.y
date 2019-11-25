@@ -81,8 +81,6 @@ program
     : decls {
         $$ = new AST_Program($1);
         start = $$;
-        if (start)
-            start->checkSemantic();
     };
 
 decls
@@ -445,6 +443,12 @@ expression
         Identifier_Node* identifier = new Identifier_Node(std::string($3));
         identifier->setPos(@3.first_line, @3.first_column);
         $$ = new Call_Expression_Node($1, identifier, $4);
+        $$->setPos(@1.first_line, @1.first_column);
+    }
+    | IDENTIFIER BO actualList BC {
+        Identifier_Node* identifier = new Identifier_Node(std::string($1));
+        identifier->setPos(@1.first_line, @1.first_column);
+        $$ = new Call_Expression_Node(nullptr, identifier, $3);
         $$->setPos(@1.first_line, @1.first_column);
     }
     | IDENTIFIER {

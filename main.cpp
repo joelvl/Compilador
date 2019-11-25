@@ -38,8 +38,10 @@ int main(const int argc, const char **argv)
         std::cout << " ║ Line          ║ Column        ║ Token                 ║ Value                 ║\n";
     }
     yyparse();
-    if (start && 0)
-        start->print(0);
-    //scopes.printScopes();
+    if (start && 1) {
+        //start->print(0);
+        start->checkSemantic();
+        //scopes.printScopes();
+    }
     return 0;
 }

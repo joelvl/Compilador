@@ -45,7 +45,8 @@ std::string typeToString(Type_Node type_)
 void AST_Node::print(int depth) {}
 AST_Node::AST_Node()
 {
-    this->parent = nullptr;
+    this->parentClass = nullptr;
+    this->parentFunction = nullptr;
 }
 AST_Node::~AST_Node() {}
 int AST_Node::getScope()
@@ -80,14 +81,34 @@ std::string AST_Node::depthSpacing(int depth)
     return spacing;
 }
 
-void AST_Node::setParent(Declaration *parent)
+void AST_Node::setParentClass(Class_Declaration *parent)
 {
-    this->parent = parent;
+    this->parentClass = parent;
 }
 
-Declaration *AST_Node::getParent()
+Class_Declaration *AST_Node::getParentClass()
 {
-    return this->parent;
+    return this->parentClass;
+}
+
+void AST_Node::setParentInterface(Interface_Declaration *parent)
+{
+    this->parentInterface = parent;
+}
+
+Interface_Declaration *AST_Node::getParentInterface()
+{
+    return this->parentInterface;
+}
+
+void AST_Node::setParentFunction(Function_Declaration *parent)
+{
+    this->parentFunction = parent;
+}
+
+Function_Declaration *AST_Node::getParentFunction()
+{
+    return this->parentFunction;
 }
 
 //AST_PROGRAM
@@ -125,6 +146,7 @@ Variable_Declaration_Node::Variable_Declaration_Node(Type_Node *type_node, Ident
     : Declaration_Node(identifier)
 {
     this->type_node = type_node;
+    this->classAtribute = false;
 }
 void Variable_Declaration_Node::print(int depth)
 {
@@ -166,11 +188,24 @@ void Variable_Declaration_Node::checkSemantic()
     {
         type = type_node;
     }
-    if (!scopes.addDeclaration(identifier->identifier, new Variable_Declaration(type, identifier->identifier)))
+
+    Variable_Declaration *variable = new Variable_Declaration(type, identifier->identifier);
+    if (!scopes.addDeclaration(identifier->identifier, variable))
     {
         printPos();
         std::cout << "Redifinición. Los identificadores dentro de un alcance deben ser únicos." << std::endl;
     }
+    else
+    {
+        if (classAtribute)
+        {
+            getParentClass()->addVariable(variable);
+        }
+    }
+}
+void Variable_Declaration_Node::setAsClassAtribute()
+{
+    this->classAtribute = true;
 }
 
 //Function_Declaration_Node
@@ -241,9 +276,9 @@ void Function_Declaration_Node::checkSemantic()
     }
     else
     {
-        if (getParent() && getParent()->declarationType == DeclarationType::CLASS_DECLARATION)
+        if (getParentClass() && getParentClass()->declarationType == DeclarationType::CLASS_DECLARATION)
         {
-            Class_Declaration *parent = (Class_Declaration *)getParent();
+            Class_Declaration *parent = getParentClass();
             parent->addFunction(function);
         }
     }
@@ -264,18 +299,16 @@ void Function_Declaration_Node::checkSemantic()
 
     for (AST_Node *statement : *statements)
     {
-        //FIX
-        if (instanceof <Return_Statement_Node>(statement))
-        {
-            if (!(((Return_Statement_Node *)statement)->getType()).convertible(*return_type))
-            {
-                printPos();
-                std::cout << "El valor de retorno: " << typeToString(((Return_Statement_Node *)statement)->getType())
-                          << " no es compatible con el valor de retorno de la función: " << typeToString(*return_type) << std::endl;
-            }
-        }
-        statement->setParent(getParent());
+        statement->setParentClass(getParentClass());
+        statement->setParentFunction(function);
         statement->checkSemantic();
+    }
+
+    if (!function->getValidReturn() && function->getType()->type != Datatype::null_type)
+    {
+        printPos();
+        std::cout << "La función no tiene un return válido." << std::endl;
+        return;
     }
 
     //Cierre scope para el bloque de la función
@@ -420,7 +453,10 @@ void Class_Declaration_Node::checkSemantic()
                 }
             }
         }
-        declaration->setParent(clazz);
+        if (instanceof <Variable_Declaration_Node>(declaration)){
+            ((Variable_Declaration_Node*) declaration)->setAsClassAtribute();
+        }
+        declaration->setParentClass(clazz);
         declaration->checkSemantic();
     }
 
@@ -479,7 +515,7 @@ void Interface_Declaration_Node::checkSemantic()
 
     for (Prototype_Node *prototype : *prototypes)
     {
-        prototype->setParent(interface);
+        prototype->setParentInterface(interface);
         prototype->checkSemantic();
     }
 
@@ -547,9 +583,9 @@ void Prototype_Node::checkSemantic()
     }
     else
     {
-        if (getParent() && getParent()->declarationType == DeclarationType::INTERFACE_DECLARATION)
+        if (getParentInterface() && getParentInterface()->declarationType == DeclarationType::INTERFACE_DECLARATION)
         {
-            Interface_Declaration *parent = (Interface_Declaration *)getParent();
+            Interface_Declaration *parent = (Interface_Declaration *)getParentInterface();
             parent->addProtype(function);
         }
     }
@@ -576,6 +612,8 @@ void Statement_Block_Node::checkSemantic()
 {
     for (AST_Node *statement : *statements)
     {
+        statement->setParentClass(getParentClass());
+        statement->setParentFunction(getParentFunction());
         statement->checkSemantic();
     }
 }
@@ -592,13 +630,22 @@ void If_Statement_Node::print(int depth)
     std::cout << depthSpacing(depth);
     std::cout << "If Statement" << std::endl;
     expression->print(depth + 1);
+
+    std::cout << depthSpacing(depth + 1);
     std::cout << "If Block" << std::endl;
-    if_block->print(depth + 1);
-    std::cout << "Else Block" << std::endl;
-    else_block->print(depth + 1);
+
+    if_block->print(depth + 2);
+    if (else_block)
+    {
+        std::cout << depthSpacing(depth + 1);
+        std::cout << "Else Block" << std::endl;
+        else_block->print(depth + 2);
+    }
 }
 void If_Statement_Node::checkSemantic()
 {
+    expression->setParentClass(getParentClass());
+    expression->setParentFunction(getParentFunction());
     if (expression->getType().type != Datatype::bool_type)
     {
         expression->printPos();
@@ -608,12 +655,19 @@ void If_Statement_Node::checkSemantic()
 
     //Bloque IF
     scopes.addScope();
+    if_block->setParentClass(getParentClass());
+    if_block->setParentFunction(getParentFunction());
     if_block->checkSemantic();
     scopes.backScope();
     //Bloque ELSE
-    scopes.addScope();
-    else_block->checkSemantic();
-    scopes.backScope();
+    if (else_block)
+    {
+        scopes.addScope();
+        else_block->setParentClass(getParentClass());
+        else_block->setParentFunction(getParentFunction());
+        else_block->checkSemantic();
+        scopes.backScope();
+    }
 }
 
 //While_Statement_Node
@@ -631,6 +685,9 @@ void While_Statement_Node::print(int depth)
 }
 void While_Statement_Node::checkSemantic()
 {
+    expression->setParentClass(getParentClass());
+    expression->setParentFunction(getParentFunction());
+
     if (expression->getType().type != Datatype::bool_type)
     {
         expression->printPos();
@@ -640,6 +697,8 @@ void While_Statement_Node::checkSemantic()
 
     //Bloque
     scopes.addScope();
+    block->setParentClass(getParentClass());
+    block->setParentFunction(getParentFunction());
     block->checkSemantic();
     scopes.backScope();
 }
@@ -664,6 +723,13 @@ void For_Statement_Node::print(int depth)
 }
 void For_Statement_Node::checkSemantic()
 {
+    expressionA->setParentClass(getParentClass());
+    expressionA->setParentFunction(getParentFunction());
+    expressionB->setParentClass(getParentClass());
+    expressionB->setParentFunction(getParentFunction());
+    expressionC->setParentClass(getParentClass());
+    expressionC->setParentFunction(getParentFunction());
+
     if (expressionB->getType().type != Datatype::bool_type)
     {
         expressionB->printPos();
@@ -672,6 +738,8 @@ void For_Statement_Node::checkSemantic()
     }
     //Bloque
     scopes.addScope();
+    block->setParentClass(getParentClass());
+    block->setParentFunction(getParentFunction());
     block->checkSemantic();
     scopes.backScope();
 }
@@ -705,6 +773,9 @@ void Print_Statement_Node::checkSemantic()
 {
     for (Expression_Node *expression : *expressions)
     {
+        expression->setParentClass(getParentClass());
+        expression->setParentFunction(getParentFunction());
+
         if (expression->getType().type != Datatype::bool_type &&
             expression->getType().type != Datatype::int_type &&
             expression->getType().type != Datatype::string_type)
@@ -727,9 +798,31 @@ void Return_Statement_Node::print(int depth)
     std::cout << "Return Statement" << std::endl;
     expression->print(depth + 1);
 }
-Type_Node Return_Statement_Node::getType()
+void Return_Statement_Node::checkSemantic()
 {
-    return expression->getType();
+    if (getParentFunction())
+    {
+        expression->setParentClass(getParentClass());
+        expression->setParentFunction(getParentFunction());
+        Type_Node expressionType = expression->getType();
+        if (!expressionType.convertible(*getParentFunction()->type))
+        {
+            printPos();
+            std::cout << "El return de tipo " << typeToString(expressionType)
+                      << " no es compatible con " << typeToString(*getParentFunction()->type) << "." << std::endl;
+            return;
+        }
+        else
+        {
+            getParentFunction()->setValidReturn();
+        }
+    }
+    else
+    {
+        printPos();
+        std::cout << "Los return pueden estar únicamente dentro de funciones." << std::endl;
+        return;
+    }
 }
 
 //Identifier_Statement_Node
@@ -925,6 +1018,16 @@ void Comparation_Expression_Node::print(int depth)
 }
 Type_Node Comparation_Expression_Node::getType()
 {
+    if (leftExpression)
+    {
+        leftExpression->setParentClass(getParentClass());
+        leftExpression->setParentFunction(getParentFunction());
+    }
+    if (rightExpression)
+    {
+        rightExpression->setParentClass(getParentClass());
+        rightExpression->setParentFunction(getParentFunction());
+    }
     // +, -, *, /, %
     if (operator_Type == Operator_Type::PLUS ||
         operator_Type == Operator_Type::MINUS ||
@@ -1052,6 +1155,16 @@ void Array_Expression_Node::print(int depth)
 }
 Type_Node Array_Expression_Node::getType()
 {
+    if (leftExpression)
+    {
+        leftExpression->setParentClass(getParentClass());
+        leftExpression->setParentFunction(getParentFunction());
+    }
+    if (rightExpression)
+    {
+        rightExpression->setParentClass(getParentClass());
+        rightExpression->setParentFunction(getParentFunction());
+    }
     if (!leftExpression->getType().isArray())
     {
         printPos();
@@ -1098,52 +1211,142 @@ void Call_Expression_Node::print(int depth)
 }
 Type_Node Call_Expression_Node::getType()
 {
-    Type_Node type = expression->getType();
-
-    if (type.type == Datatype::null_type)
+    if (expression)
     {
-        printPos();
-        std::cout << "No se pueden realizar llamadas a un tipo nulo." << std::endl;
-        return Type_Node(Datatype::null_type);
+        expression->setParentClass(getParentClass());
+        expression->setParentFunction(getParentFunction());
     }
-    else if (actuals)
-    { // Si es una función tiene actuals aunque esté vacio
-        if (identifier->identifier == "length" && type.isArray())
+    Expression_Node *expression = this->expression;
+
+    if (!expression)
+    { // identifier(...);
+        Declaration *declaration = scopes.getDeclaration(identifier->identifier);
+        //variable
+        if (declaration->declarationType == DeclarationType::VARIABLE_DECLARATION)
         {
-            return Type_Node(Datatype::int_type);
-        }
-        else if (type.type == Datatype::identifier_type)
-        {
-            Declaration* declaration = scopes.getDeclaration(type.identifier->identifier);
-            if (!declaration){
+            if (actuals)
+            {
                 printPos();
-                std::cout << "La variable " << typeToString(type) << " no está declarado." << std::endl; //?
+                std::cout << "Llamada de función a una variable." << std::endl;
                 return Type_Node(Datatype::null_type);
-            } else
-            if (declaration->declarationType == CLASS_DECLARATION){
-                std::vector<Type_Node*> parameters;
-                for (Expression_Node* expression : *actuals){
-                    Type_Node tn = expression->getType();
-                    parameters.push_back(&tn);
-                }
-                std::cout << 1 << std::endl;
-                Type_Node* returnType = ((Class_Declaration*) declaration)->getFunction(identifier->identifier, parameters);
-                if (!returnType){
-                    printPos();
-                    std::cout << type.identifier->identifier << " no tiene una función llamada " << identifier->identifier << std::endl; //?
-                    return Type_Node(Datatype::null_type);
-                } else {
-                    return *returnType;
-                }
             }
-        } else {
+        }
+        else if (declaration->declarationType == DeclarationType::FUNCTION_DECLARATION)
+        {
+            std::vector<Type_Node *> parameters;
+            for (Expression_Node *expression : *actuals)
+            {
+                Type_Node tn = expression->getType();
+                parameters.push_back(&tn);
+            }
+            if (!((Function_Declaration *)declaration)->checkParameters(parameters))
+            {
+                printPos();
+                std::cout << " no tiene una función llamada " << identifier->identifier << std::endl;
+                return Type_Node(Datatype::null_type);
+            }
+            else
+            {
+                return *((Function_Declaration *)declaration)->getType();
+            }
+        }
+    }
+    else
+    { // expression.identifier(...) / expression.identifier;
+        Type_Node type = expression->getType();
+        if (type.type == Datatype::null_type)
+        {
             printPos();
-            std::cout << "El tipo " << typeToString(type) << " no tiene un método llamado " << identifier->identifier << "." << std::endl;
+            std::cout << "No se pueden realizar llamadas a un tipo nulo." << std::endl;
             return Type_Node(Datatype::null_type);
         }
-    } else {
-        //TODO - Atributos
-        return Type_Node(Datatype::null_type);
+        else if (actuals)
+        {                                                             // Si es una función tiene actuals aunque esté vacio
+            if (identifier->identifier == "length" && type.isArray()) //función length para arrays
+            {
+                return Type_Node(Datatype::int_type);
+            }
+            else if (type.type == Datatype::identifier_type)
+            {
+                Declaration *declaration = scopes.getDeclaration(type.identifier->identifier);
+                if (!declaration)
+                {
+                    printPos();
+                    std::cout << "La variable " << typeToString(type) << " no está declarada." << std::endl; //?
+                    return Type_Node(Datatype::null_type);
+                }
+                else if (declaration->declarationType == CLASS_DECLARATION)
+                {
+                    std::vector<Type_Node *> parameters;
+                    for (Expression_Node *expression : *actuals)
+                    {
+                        Type_Node tn = expression->getType();
+                        parameters.push_back(&tn);
+                    }
+                    Type_Node *returnType = ((Class_Declaration *)declaration)->getFunction(identifier->identifier, parameters);
+                    if (!returnType)
+                    {
+                        printPos();
+                        std::cout << type.identifier->identifier << " no tiene una función llamada " << identifier->identifier << "." << std::endl; //?
+                        return Type_Node(Datatype::null_type);
+                    }
+                    else
+                    {
+                        return *returnType;
+                    }
+                }
+                else
+                {
+                    printPos();
+                    std::cout << type.identifier->identifier << " no es una clase." << std::endl; //?
+                    return Type_Node(Datatype::null_type);
+                }
+            }
+            else
+            {
+                printPos();
+                std::cout << "El tipo " << typeToString(type) << " no tiene un método llamado " << identifier->identifier << "." << std::endl;
+                return Type_Node(Datatype::null_type);
+            }
+        }
+        else
+        {
+            Declaration *declaration = scopes.getDeclaration(type.identifier->identifier);
+            if (!declaration)
+            {
+                printPos();
+                std::cout << "La variable " << typeToString(type) << " no está declarada." << std::endl; //?
+                return Type_Node(Datatype::null_type);
+            }
+            else if (declaration->declarationType == CLASS_DECLARATION)
+            {
+                Class_Declaration* clazz = ((Class_Declaration *) declaration);
+                Type_Node *returnType = clazz->getVariable(identifier->identifier);
+                if (!returnType)
+                {
+                    printPos();
+                    std::cout << type.identifier->identifier << " no tiene un atributo llamado " << identifier->identifier << "." << std::endl; //?
+                    return Type_Node(Datatype::null_type);
+                }
+                else if (getParentClass() && getParentClass()->type->convertible(*clazz->getType()))
+                {
+                    return *returnType;
+                }
+                else
+                {
+                    printPos();
+                    std::cout << "No se puede acceder a un atributo privado." << std::endl; //?
+                    return Type_Node(Datatype::null_type);
+                }
+            }
+            else
+            {
+                printPos();
+                std::cout << type.identifier->identifier << " no es una clase." << std::endl; //?
+                return Type_Node(Datatype::null_type);
+            }
+            return Type_Node(Datatype::null_type);
+        }
     }
 }
 
@@ -1322,6 +1525,11 @@ void NewArray_Expression_Node::print(int depth)
 }
 Type_Node NewArray_Expression_Node::getType()
 {
+    if (expression)
+    {
+        expression->setParentClass(getParentClass());
+        expression->setParentFunction(getParentFunction());
+    }
     if (expression->getType().type != Datatype::int_type)
     {
         printPos();
@@ -1353,6 +1561,14 @@ void This_Expression_Node::print(int depth)
 }
 Type_Node This_Expression_Node::getType()
 {
-    //TODO
-    return Type_Node(Datatype::string_type);
+    if (getParentClass())
+    {
+        return *getParentClass()->getType();
+    }
+    else
+    {
+        printPos();
+        std::cout << "Uso incorrecto de This. Solo se puede usar dentro de alguna clase." << std::endl;
+        return Type_Node(Datatype::null_type);
+    }
 }

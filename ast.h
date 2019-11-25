@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "ScopeStack.cpp"
+#include "Declaration.h"
 
 class AST_Node;
 class AST_Program;
@@ -40,15 +42,26 @@ class New_Expression_Node;
 class NewArray_Expression_Node;
 class This_Expression_Node;
 
+class Declaration;
+
+extern ScopeStack<Declaration> scopes;
+
 enum class Datatype
 {
     int_type,
     double_type,
     bool_type,
     string_type,
-    identifier_type,
-    null_type
+    null_type,
+    identifier_type
 };
+
+std::string typeToString(Type_Node type);
+
+template<typename Base, typename T>
+inline bool instanceof(const T *ptr) {
+    return dynamic_cast<const Base*>(ptr) != nullptr;
+}
 
 enum class Operator_Type
 {
@@ -118,22 +131,31 @@ typedef union node YYSTYPE;
 
 class AST_Node
 {
+    int line, column;
+    int scope;
+    Declaration* parent;
 public:
-    virtual void print(int depth);
+    std::string depthSpacing(int depth);
     AST_Node();
     ~AST_Node();
-    std::string depthSpacing(int depth);
+    int getScope();
+    void setScope(int scope);
+    void setPos(int line, int column);
+    void printPos();
+    virtual void checkSemantic();
+    virtual void print(int depth);
+    void setParent(Declaration* parent);
+    Declaration* getParent();
 };
-
 
 class AST_Program : public AST_Node
 {
 public:
     std::vector<Declaration_Node *> *declarations;
     AST_Program(std::vector<Declaration_Node *> *declarations);
+    virtual void checkSemantic();
     virtual void print(int depth);
 };
-
 
 class Declaration_Node : public AST_Node
 {
@@ -142,56 +164,56 @@ public:
     Declaration_Node(Identifier_Node *identifier);
 };
 
-
 class Variable_Declaration_Node : public Declaration_Node
 {
 public:
     Type_Node *type_node;
     Variable_Declaration_Node(Type_Node *type_node, Identifier_Node *identifier);
+    virtual void checkSemantic();
     virtual void print(int depth);
 };
-
 
 class Function_Declaration_Node : public Declaration_Node
 {
 public:
-    Type_Node *type_node;
+    Type_Node *return_type;
     std::vector<Variable_Declaration_Node *> *parameters;
     Statement_Block_Node *statement_Block;
     Function_Declaration_Node(Type_Node *type_node, Identifier_Node *identifier, std::vector<Variable_Declaration_Node *> *parameters, Statement_Block_Node *statement_Block);
+    virtual void checkSemantic();
     virtual void print(int depth);
 };
-
 
 class Class_Declaration_Node : public Declaration_Node
 {
 public:
     Identifier_Node *extends;
     std::vector<Identifier_Node *> *implements;
+
     std::vector<Declaration_Node *> *field;
     Class_Declaration_Node(Identifier_Node *identifier, Identifier_Node *extends, std::vector<Identifier_Node *> *implements, std::vector<Declaration_Node *> *field);
+    virtual void checkSemantic();
     virtual void print(int depth);
 };
 
-
-class Interface_Declaration_Node : public Declaration_Node
+class Interface_Declaration_Node : public Declaration_Node //TODO
 {
 public:
     std::vector<Prototype_Node *> *prototypes;
     Interface_Declaration_Node(Identifier_Node *identifier, std::vector<Prototype_Node *> *prototypes);
     virtual void print(int depth);
+    virtual void checkSemantic();
 };
 
-
-class Prototype_Node : public Declaration_Node
+class Prototype_Node : public Declaration_Node //TODO
 {
 public:
-    Type_Node *type_node;
+    Type_Node *return_type;
     std::vector<Variable_Declaration_Node *> *parameters;
-    Prototype_Node(Type_Node *type_node, Identifier_Node *identifier, std::vector<Variable_Declaration_Node *> *parameters);
+    Prototype_Node(Type_Node *return_type, Identifier_Node *identifier, std::vector<Variable_Declaration_Node *> *parameters);
     virtual void print(int depth);
+    virtual void checkSemantic();
 };
-
 
 class Statement_Node : public AST_Node
 {
@@ -199,15 +221,15 @@ public:
     Statement_Node();
 };
 
-
 class Statement_Block_Node : public Statement_Node
 {
 public:
+    unsigned int scopeid;
     std::vector<AST_Node *> *statements;
     Statement_Block_Node(std::vector<AST_Node *> *statements);
+    virtual void checkSemantic();
     virtual void print(int depth);
 };
-
 
 class If_Statement_Node : public Statement_Node
 {
@@ -216,9 +238,9 @@ public:
     Statement_Block_Node *if_block;
     Statement_Block_Node *else_block;
     If_Statement_Node(Expression_Node *expression, Statement_Block_Node *if_block, Statement_Block_Node *else_block);
+    virtual void checkSemantic();
     virtual void print(int depth);
 };
-
 
 class While_Statement_Node : public Statement_Node
 {
@@ -226,9 +248,9 @@ public:
     Expression_Node *expression;
     Statement_Block_Node *block;
     While_Statement_Node(Expression_Node *expression, Statement_Block_Node *block);
+    virtual void checkSemantic();
     virtual void print(int depth);
 };
-
 
 class For_Statement_Node : public Statement_Node
 {
@@ -238,9 +260,9 @@ public:
     Expression_Node *expressionC;
     Statement_Block_Node *block;
     For_Statement_Node(Expression_Node *expressiA, Expression_Node *expressiB, Expression_Node *expressionC, Statement_Block_Node *block);
+    virtual void checkSemantic();
     virtual void print(int depth);
 };
-
 
 class Break_Statement_Node : public Statement_Node
 {
@@ -249,15 +271,14 @@ public:
     virtual void print(int depth);
 };
 
-
 class Print_Statement_Node : public Statement_Node
 {
 public:
     std::vector<Expression_Node *> *expressions;
     Print_Statement_Node(std::vector<Expression_Node *> *expressions);
     virtual void print(int depth);
+    virtual void checkSemantic();
 };
-
 
 class Return_Statement_Node : public Statement_Node
 {
@@ -265,10 +286,11 @@ public:
     Expression_Node *expression;
     Return_Statement_Node(Expression_Node *expression);
     virtual void print(int depth);
+    virtual Type_Node getType();
+    
 };
 
-
-class Identifier_Node : AST_Node
+class Identifier_Node : public AST_Node
 {
 public:
     std::string identifier;
@@ -276,24 +298,31 @@ public:
     virtual void print(int depth);
 };
 
-
 class Type_Node : public AST_Node
 {
 public:
     Datatype type;
     Identifier_Node *identifier;
+    Type_Node* derived;
+    std::vector<Type_Node*> implemented;
+    bool array;
+    bool isArray();
     Type_Node(Datatype type);
     Type_Node(Datatype type, Identifier_Node *identifier);
+    void setAsArray();
     virtual void print(int depth);
+    void setDerived(Type_Node* type_Node);
+    void implement(Type_Node* type_Node);
+    bool convertible(Type_Node type_node);
 };
-
 
 class Expression_Node : public Statement_Node
 {
 public:
     Expression_Node();
+    virtual Type_Node getType();
+    virtual void checkSemantic();
 };
-
 
 class Comparation_Expression_Node : public Expression_Node
 {
@@ -303,8 +332,8 @@ public:
     Operator_Type operator_Type;
     Comparation_Expression_Node(Expression_Node *leftExpression, Expression_Node *rightExpression, Operator_Type operator_Type);
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class Array_Expression_Node : public Expression_Node
 {
@@ -313,8 +342,8 @@ public:
     Expression_Node *rightExpression;
     Array_Expression_Node(Expression_Node *leftExpression, Expression_Node *rightExpression);
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class Call_Expression_Node : public Expression_Node
 {
@@ -324,8 +353,8 @@ public:
     std::vector<Expression_Node *> *actuals;
     Call_Expression_Node(Expression_Node *expression, Identifier_Node *identifier, std::vector<Expression_Node *> *actuals);
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class Identifier_Expression_Node : public Expression_Node
 {
@@ -333,8 +362,8 @@ public:
     Identifier_Node *identifier;
     Identifier_Expression_Node(Identifier_Node *identifier);
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class Int_Constant_Expression_Node : public Expression_Node
 {
@@ -342,8 +371,8 @@ public:
     int value;
     Int_Constant_Expression_Node(int value);
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class Double_Constant_Expression_Node : public Expression_Node
 {
@@ -351,8 +380,8 @@ public:
     double value;
     Double_Constant_Expression_Node(double value);
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class Boolean_Constant_Expression_Node : public Expression_Node
 {
@@ -360,8 +389,8 @@ public:
     bool value;
     Boolean_Constant_Expression_Node(bool value);
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class String_Constant_Expression_Node : public Expression_Node
 {
@@ -369,41 +398,41 @@ public:
     std::string value;
     String_Constant_Expression_Node(std::string value);
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class Null_Constant_Expression_Node : public Expression_Node
 {
 public:
     Null_Constant_Expression_Node();
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class ReadInteger_Expression_Node : public Expression_Node
 {
 public:
     ReadInteger_Expression_Node();
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class ReadLine_Expression_Node : public Expression_Node
 {
 public:
     ReadLine_Expression_Node();
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class New_Expression_Node : public Expression_Node
 {
 public:
     Identifier_Node *identifier;
-    New_Expression_Node(Identifier_Node *identfier);
+    New_Expression_Node(Identifier_Node *identifier);
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class NewArray_Expression_Node : public Expression_Node
 {
@@ -412,15 +441,15 @@ public:
     Type_Node *type;
     NewArray_Expression_Node(Expression_Node *identfier, Type_Node *type);
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 class This_Expression_Node : public Expression_Node
 {
 public:
     This_Expression_Node();
     virtual void print(int depth);
+    virtual Type_Node getType();
 };
-
 
 #endif

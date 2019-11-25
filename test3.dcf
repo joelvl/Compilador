@@ -1,0 +1,21 @@
+class AClass {
+    int number;
+}
+
+class BClass extends AClass{
+    int a;
+    string toString(){
+
+    }
+}
+
+class CClass extends BClass{
+    void main(){
+        int[] array;
+        BClass b;
+        b.toString();
+        array = NewArray(4, int);
+        a = array[0];
+        a = array.length;
+    }
+}

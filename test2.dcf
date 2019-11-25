@@ -1,0 +1,36 @@
+interface inter {
+    void print(string asd);
+}
+
+class xx {
+
+}
+
+class hola implements inter {
+    void print(string asd){
+
+    }
+    
+    int aa(inter a){
+        a.print2();
+    }
+
+    class quehace extends hola {
+        void print(string asd){
+
+        }
+    }
+
+    void main (){
+        quehace derivada;
+        hola base;
+        base = New(hola);
+
+        int[] array;
+        array = NewArray(2, int);
+
+        Print(true);
+        return;
+    }
+}
+

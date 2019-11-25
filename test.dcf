@@ -1,0 +1,48 @@
+class Hello implements Object{
+    int[] qwe;
+
+    void main() {
+        Print("Hello world\n");
+    }
+/*
+    void test(){
+        Print("Test");
+        a = 4 + 2 * 3;
+        a = a + 4 / 2 * a + (4 + b - 3 * a);
+    }
+*/
+    int asd(int a, int e, string z){
+        int b;
+        int[] array;
+        b = array["asd"];
+        b = 4.54454;
+        for (a = 2; 4 > 4; a = a + 4){
+            Print(b);
+        }
+        return 4;
+    }
+
+    class test422 extends Hello {
+        int asd;
+        int rrr;
+        void tlr(string u){
+            int rrr;
+            string asd;
+            bool ewqe;
+            while(ewqe){
+                double oo;
+                Print("hi");
+            }
+        }
+    }
+
+    void yuyu (){
+        Hello d;
+        test422 a;
+        int[] e;
+        d = a;
+        int c; 
+        c = a[4];
+        d = c;
+    }
+}

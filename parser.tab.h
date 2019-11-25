@@ -93,43 +93,40 @@ extern int yydebug;
     DOT = 299,
     SBO = 300,
     SBC = 301,
-    BO = 302,
-    BC = 303,
-    CBO = 304,
-    CBC = 305,
-    INT_VALUE = 306,
-    DOUBLE_VALUE = 307,
-    CHAR_VALUE = 308,
-    INVALID_CHAR = 309,
-    STRING_VALUE = 310,
-    INVALID_STRING = 311,
-    IDENTIFIER = 312
+    DBO = 302,
+    BO = 303,
+    BC = 304,
+    CBO = 305,
+    CBC = 306,
+    INT_VALUE = 307,
+    DOUBLE_VALUE = 308,
+    CHAR_VALUE = 309,
+    INVALID_CHAR = 310,
+    STRING_VALUE = 311,
+    INVALID_STRING = 312,
+    IDENTIFIER = 313
   };
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
-union YYSTYPE
+/* Location type.  */
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE YYLTYPE;
+struct YYLTYPE
 {
-#line 64 "parser.y" /* yacc.c:1921  */
-
-    int ival;
-    double dval;
-    char cval;
-    char* sval;
-
-#line 123 "parser.tab.h" /* yacc.c:1921  */
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
 };
-
-typedef union YYSTYPE YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
 #endif
 
 
 extern YYSTYPE yylval;
-
+extern YYLTYPE yylloc;
 int yyparse (void);
 
 #endif /* !YY_YY_PARSER_TAB_H_INCLUDED  */

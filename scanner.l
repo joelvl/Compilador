@@ -5,13 +5,20 @@
 
 #define YY_DECL extern "C" int yylex()
 
+int yycolumn = 1;
+
+#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; \
+    yylloc.first_column = yycolumn; yylloc.last_column = yycolumn + yyleng - 1; \
+    yycolumn += yyleng; \
+    yylval.sval = strdup(yytext);
+
 void printToken(int, int, char* , char*);
 void printError(int, int, char*);
 void printStringError(int, int);
+void yyerror(char* s);
 
 extern union node yylval;
-
-int column = 1;
+extern bool printTokenTable;
 
 %}
 %option yylineno
@@ -31,223 +38,228 @@ TAG                         [ \t\r\\]
 
     /* Comentarios */
 
-\/\/(.*)                    ;
-\/\*(.|\n)*\*\/             ;
+\/\/(.*) ;
+\/\*(.|\n)*\*\/ ;
 
     /*   OPERADORES   */
 
 \+ {
-    printToken(yylineno, yyleng, "PLUS", nullptr);
+    printToken(yylineno, yyleng, "PLUS", strdup(yytext));
     return PLUS;
 }
 \- {
-    printToken(yylineno, yyleng, "MINUS", nullptr);
+    printToken(yylineno, yyleng, "MINUS", strdup(yytext));
     return MINUS;
 }
 \* {
-    printToken(yylineno, yyleng, "MUL", nullptr);
+    printToken(yylineno, yyleng, "MUL", strdup(yytext));
     return MUL;
 }
 \/ {
-    printToken(yylineno, yyleng, "DIV", nullptr);
+    printToken(yylineno, yyleng, "DIV", strdup(yytext));
     return DIV;
 }
 \% {
-    printToken(yylineno, yyleng, "MOD", nullptr);
+    printToken(yylineno, yyleng, "MOD", strdup(yytext));
     return MOD;
 }
 \<\= {
-    printToken(yylineno, yyleng, "LESSEQUAL", nullptr);
+    printToken(yylineno, yyleng, "LESSEQUAL", strdup(yytext));
     return LESSEQUAL;
 }
 \< {
-    printToken(yylineno, yyleng, "LESS", nullptr);
+    printToken(yylineno, yyleng, "LESS", strdup(yytext));
     return LESS;
 }
 \>\= {
-    printToken(yylineno, yyleng, "GREATEREQUAL", nullptr);
+    printToken(yylineno, yyleng, "GREATEREQUAL", strdup(yytext));
     return GREATEREQUAL;
 }
 \> {
-    printToken(yylineno, yyleng, "GREATER", nullptr);
+    printToken(yylineno, yyleng, "GREATER", strdup(yytext));
     return GREATER;
 }
 \=\= {
-    printToken(yylineno, yyleng, "EQUALEQUAL", nullptr);
+    printToken(yylineno, yyleng, "EQUALEQUAL", strdup(yytext));
     return EQUALEQUAL;
 }
 \= {
-    printToken(yylineno, yyleng, "EQUAL", nullptr);
+    printToken(yylineno, yyleng, "EQUAL", strdup(yytext));
     return EQUAL;
 }
 \!\= {
-    printToken(yylineno, yyleng, "NOTEQUAL", nullptr);
+    printToken(yylineno, yyleng, "NOTEQUAL", strdup(yytext));
     return NOTEQUAL;
 }
 \&\& {
-    printToken(yylineno, yyleng, "AND", nullptr);
+    printToken(yylineno, yyleng, "AND", strdup(yytext));
     return AND;
 }
 \|\| {
-    printToken(yylineno, yyleng, "OR", nullptr);
+    printToken(yylineno, yyleng, "OR", strdup(yytext));
     return OR;
 }
 \! {
-    printToken(yylineno, yyleng, "NOT", nullptr);
+    printToken(yylineno, yyleng, "NOT", strdup(yytext));
        return NOT;
 }
 \; {
-    printToken(yylineno, yyleng, "SEMICOLON", nullptr);
+    printToken(yylineno, yyleng, "SEMICOLON", strdup(yytext));
        return SEMICOLON;
 }
 \, {
-    printToken(yylineno, yyleng, "COMMA", nullptr);
+    printToken(yylineno, yyleng, "COMMA", strdup(yytext));
        return COMMA;
 }
 \. {
-    printToken(yylineno, yyleng, "DOT", nullptr);
+    printToken(yylineno, yyleng, "DOT", strdup(yytext));
        return DOT;
 }
+\[\] {
+    printToken(yylineno, yyleng, "DBO", strdup(yytext));
+       return DBO;
+}
 \[ {
-    printToken(yylineno, yyleng, "SBO", nullptr);
+    printToken(yylineno, yyleng, "SBO", strdup(yytext));
        return SBO;
 }
 \] {
-    printToken(yylineno, yyleng, "SBC", nullptr);
+    printToken(yylineno, yyleng, "SBC", strdup(yytext));
        return SBC;
 }
 \( {
-    printToken(yylineno, yyleng, "BO", nullptr);
+    printToken(yylineno, yyleng, "BO", strdup(yytext));
        return BO;
 }
 \) {
-    printToken(yylineno, yyleng, "BC", nullptr);
+    printToken(yylineno, yyleng, "BC", strdup(yytext));
        return BC;
 }
 \{ {
-    printToken(yylineno, yyleng, "CBO", nullptr);
+    printToken(yylineno, yyleng, "CBO", strdup(yytext));
        return CBO; 
 }
 \} { 
-    printToken(yylineno, yyleng, "CBC", nullptr);
+    printToken(yylineno, yyleng, "CBC", strdup(yytext));
        return CBC;
 }
 \n { 
-    column = 0; 
+    yycolumn = 1;
 }
 
     /*   KEYWORDS     */
 
-void                        {   printToken(yylineno, yyleng, "VOID", nullptr);
-                                   return VOID;
-                            }
+void {
+    printToken(yylineno, yyleng, "VOID", strdup(yytext));
+    return VOID;
+}
 int {
-    printToken(yylineno, yyleng, "INT", nullptr);
+    printToken(yylineno, yyleng, "INT", strdup(yytext));
     return INT;
 }
 double {
-    printToken(yylineno, yyleng, "DOUBLE", nullptr);
+    printToken(yylineno, yyleng, "DOUBLE", strdup(yytext));
     return DOUBLE;
 }
 bool {   
-    printToken(yylineno, yyleng, "BOOL", nullptr);
+    printToken(yylineno, yyleng, "BOOL", strdup(yytext));
     return BOOL;
 }
 string {
-    printToken(yylineno, yyleng, "STRING", nullptr);
+    printToken(yylineno, yyleng, "STRING", strdup(yytext));
     return STRING;
 }
 class {
-    printToken(yylineno, yyleng, "CLASS", nullptr);
+    printToken(yylineno, yyleng, "CLASS", strdup(yytext));
     return CLASS;
 }
 
 interface {
-    printToken(yylineno, yyleng, "INTERFACE", nullptr);
+    printToken(yylineno, yyleng, "INTERFACE", strdup(yytext));
     return INTERFACE;
 }
 
 null {
-    printToken(yylineno, yyleng, "NULL", nullptr);
+    printToken(yylineno, yyleng, "NULL", strdup(yytext));
     return _NULL;
 }
 
 this {
-    printToken(yylineno, yyleng, "THIS", nullptr);
+    printToken(yylineno, yyleng, "THIS", strdup(yytext));
     return THIS;
 }
 
 extends {
-    printToken(yylineno, yyleng, "EXTENDS", nullptr);
+    printToken(yylineno, yyleng, "EXTENDS", strdup(yytext));
     return EXTENDS;
 }
 
 implements {
-    printToken(yylineno, yyleng, "IMPLEMENTS", nullptr);
+    printToken(yylineno, yyleng, "IMPLEMENTS", strdup(yytext));
     return IMPLEMENTS;
 }
 
 for {
-    printToken(yylineno, yyleng, "FOR", nullptr);
+    printToken(yylineno, yyleng, "FOR", strdup(yytext));
     return FOR;
 }
 while {
-    printToken(yylineno, yyleng, "WHILE", nullptr);
+    printToken(yylineno, yyleng, "WHILE", strdup(yytext));
     return WHILE;
 }
 
 if {
-    printToken(yylineno, yyleng, "IF", nullptr);
+    printToken(yylineno, yyleng, "IF", strdup(yytext));
     return IF;
 }
 
 else {
-    printToken(yylineno, yyleng, "ELSE", nullptr);
+    printToken(yylineno, yyleng, "ELSE", strdup(yytext));
     return ELSE;
 }
 
 return {
-    printToken(yylineno, yyleng, "RETURN", nullptr);
+    printToken(yylineno, yyleng, "RETURN", strdup(yytext));
     return RETURN;
 }
 
 break {
-    printToken(yylineno, yyleng, "BREAK", nullptr);
+    printToken(yylineno, yyleng, "BREAK", strdup(yytext));
     return BREAK;
 }
 
 New {
-    printToken(yylineno, yyleng, "NEW", nullptr);
+    printToken(yylineno, yyleng, "NEW", strdup(yytext));
     return NEW;
 }
 
 NewArray {
-    printToken(yylineno, yyleng, "NEWARRAY", nullptr);
+    printToken(yylineno, yyleng, "NEWARRAY", strdup(yytext));
     return NEWARRAY;
 }
 
 Print {
-    printToken(yylineno, yyleng, "PRINT", nullptr);
+    printToken(yylineno, yyleng, "PRINT", strdup(yytext));
     return PRINT;
 }
 
 ReadInteger {
-    printToken(yylineno, yyleng, "READINTEGER", nullptr);
+    printToken(yylineno, yyleng, "READINTEGER", strdup(yytext));
     return READINTEGER;
 }
 
 ReadLine {
-    printToken(yylineno, yyleng, "READLINE", nullptr);
+    printToken(yylineno, yyleng, "READLINE", strdup(yytext));
     return READLINE;
 }
 
 true {
-    printToken(yylineno, yyleng, "TRUE", nullptr);
+    printToken(yylineno, yyleng, "TRUE", strdup(yytext));
     return _TRUE;
 }
 
 false {
-    printToken(yylineno, yyleng, "FALSE", nullptr);
+    printToken(yylineno, yyleng, "FALSE", strdup(yytext));
     return _FALSE;
 }
 
@@ -303,10 +315,14 @@ false {
     return IDENTIFIER; 
 }
 {TAG} {
-    column+=yyleng;
+    //yycolumn+=yyleng;
 }
 
-
+<<EOF>> {
+    if (printTokenTable)
+        printf(" ╚═══════════════╩═══════════════╩═══════════════════════╩═══════════════════════╝\n");
+    return 0;
+}
 
     /* OTHER */
 . {
@@ -323,7 +339,11 @@ void printNSpaces(int n){
 }
 
 void printToken(int line, int lenToken, char *yytokentype, char *sType){
-    printf("        ║ %d\t\t║ %d\t\t║", line, column);
+    if (!printTokenTable){
+        return;
+    }
+    printf(" ╠═══════════════╬═══════════════╬═══════════════════════╬═══════════════════════╣\n");
+    printf(" ║ %d\t\t ║ %d\t\t ║", yylineno, yylloc.first_column);
 
     printf(" %s", yytokentype);
     printNSpaces(22 - strlen(yytokentype));
@@ -336,14 +356,12 @@ void printToken(int line, int lenToken, char *yytokentype, char *sType){
         printNSpaces(23);
     }
     printf("║\n");
-    printf("        ╠═══════════════╬═══════════════╬═══════════════════════╬═══════════════════════╣\n");
-    column += lenToken;
 }
 
 void printError(int line, int column, char* sType){
-	printf("%d:%d: Lexical Error: Invalid character %s\n", line, column, sType);
+	printf("\t%d:%d: Lexical Error: Invalid character %s\n", line, column, sType);
 }
 
 void printStringError(int line, int column){
-	printf("%d:%d: Lexical Error: Unclosed string.", line, column);
+	printf("\t%d:%d: Lexical Error: Unclosed string.", line, column);
 }

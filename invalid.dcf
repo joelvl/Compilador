@@ -1,0 +1,72 @@
+interface Printable {
+    void print();
+}
+
+class Person implements Printable, RandomInterface { //Interface inexistente
+    int id;
+    string name;
+    string id; //Re declaración de variable
+    bool active;
+
+    void print(){
+        Print("Name:\n    ", name, "Age:\n    ", age);
+    }
+
+    int getAge(){
+        return this.age;
+    }
+
+    string getName(){
+        return this.name;
+    }
+
+    bool isActive(){
+        return this.active;
+    }
+
+    Person qwer(Printable asd){
+        return null;
+    }
+}
+
+class Course {
+    int id;
+
+    class Topic {
+        string name;
+    }
+}
+
+int main(){
+
+    return "abc";
+}
+
+void randomFunction (){
+    this; //This fuera de clase
+}
+
+class Student extends Person implements Printable {
+    int grade;
+    int abc;
+
+    void main(string[] args, int args){
+        Student std;
+        Person prs;
+        
+        string abc;
+
+        abc = "ABC";
+
+        prs = std;
+        std = null;
+
+        while (isActive() || prs){ // Operación booleana inválida / 
+            for (grade; abc; grade){ // String en lugar de bool
+                break;
+            }
+        }
+
+        break; //Break fuera de ciclo
+    }
+}

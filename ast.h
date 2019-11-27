@@ -140,6 +140,7 @@ class AST_Node
     Class_Declaration* parentClass;
     Interface_Declaration* parentInterface;
     Function_Declaration* parentFunction;
+    bool inCycle;
 public:
     std::string depthSpacing(int depth);
     AST_Node();
@@ -156,6 +157,8 @@ public:
     Interface_Declaration* getParentInterface();
     void setParentFunction(Function_Declaration* parent);
     Function_Declaration* getParentFunction();
+    void setInCycle();
+    bool isInCycle();
 };
 
 class AST_Program : public AST_Node
@@ -280,6 +283,7 @@ class Break_Statement_Node : public Statement_Node
 {
 public:
     Break_Statement_Node();
+    virtual void checkSemantic();
     virtual void print(int depth);
 };
 
@@ -325,6 +329,7 @@ public:
     void setDerived(Type_Node* type_Node);
     void implement(Type_Node* type_Node);
     bool convertible(Type_Node type_node);
+    std::string toString();
 };
 
 class Expression_Node : public Statement_Node

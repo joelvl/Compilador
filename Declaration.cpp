@@ -47,13 +47,13 @@ void Function_Declaration::addParameter(Type_Node* type)
     parameterTypes.push_back(type);
 }
 
-bool Function_Declaration::checkParameters(std::vector<Type_Node*> parameterTypes)
+bool Function_Declaration::checkParameters(std::vector<Type_Node*> parameters)
 {
-    if (parameterTypes.size() == this->parameterTypes.size())
+    if (parameters.size() == parameterTypes.size())
     {
-        for (int i = 0; i < this->parameterTypes.size(); i++)
+        for (int i = 0; i < parameterTypes.size(); i++)
         {
-            if (!parameterTypes[i]->convertible(*this->parameterTypes[i]))
+            if (!parameters[i]->convertible(*parameterTypes[i]))
             {
                 return false;
             }
@@ -185,36 +185,21 @@ bool Interface_Declaration::hasPrototype(std::string identifier, Type_Node *retu
         }
     }
 }
-bool Interface_Declaration::validDerivedClass(std::vector<Function_Declaration*> declaredFunctions)
+bool Interface_Declaration::validDerivedClass(Class_Declaration* clazz)
 {
     for (Function_Declaration* prototype : prototypes)
     {
-        bool declaraedPrototype = false;
-        for (Function_Declaration* function : declaredFunctions)
-        {
-            if (prototype->identifier == function->identifier)
-            {
-                if (function->parameterTypes.size() != prototype->parameterTypes.size())
-                {
-                    return false;
-                }
-                if (!function->getType()->convertible(*prototype->getType())){
-                    return false;
-                }
-                for (int i = 0; i < function->parameterTypes.size(); i++)
-                {
-                    if (!function->parameterTypes[i]->convertible(*prototype->parameterTypes[i]))
-                    {
-                        return false;
-                    }
-                }
-                declaraedPrototype = true;
+        Class_Declaration* tempClazz = clazz;
+        bool declaredPrototype = false;
+        while (clazz){
+            if (clazz->hasFunction(prototype->getIdentifier(),prototype->getType(), prototype->parameterTypes)){
+                declaredPrototype = true;
+                break;
             }
+            clazz = clazz->extends;
         }
-        if (!declaraedPrototype)
-        {
+        if (!declaredPrototype) 
             return false;
-        }
     }
     return true;
 }

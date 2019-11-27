@@ -112,8 +112,8 @@ identifiers
         $$ = new std::vector<Identifier_Node*> ();
         $$->push_back(new Identifier_Node(std::string($1)));
     }
-    | identifiers IDENTIFIER {
-        $1->push_back(new Identifier_Node(std::string($2)));
+    | identifiers COMMA IDENTIFIER {
+        $1->push_back(new Identifier_Node(std::string($3)));
         $$ = $1;
     };
 
@@ -130,6 +130,7 @@ functionDecl
         type->setPos(@1.first_line, @1.first_column);
         identifier->setPos(@2.first_line, @2.first_column);
         $$ = new Function_Declaration_Node(type, identifier, $4, $6);
+        $$->setPos(@1.first_line, @1.first_column);
     };
 
 optFormals

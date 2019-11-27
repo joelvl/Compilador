@@ -11,17 +11,11 @@ extern "C" int yyparse();
 AST_Program *start;
 ScopeStack<Declaration> scopes;
 
-bool printTokenTable = false;
+bool printTokenTable = true;
 
 int main(const int argc, const char **argv)
 {
-    if (argc < 2)
-    {
-        yyin = NULL;
-        std::cerr << "        Fatal error: No input files." << std::endl;
-        return -1;
-    }
-    else
+    if (argc >= 2)
     {
         FILE *infile = fopen(argv[1], "r");
         if (!infile)
@@ -31,6 +25,7 @@ int main(const int argc, const char **argv)
         }
         yyin = infile;
     }
+    
     if (printTokenTable){
         std::cout << " ╔═══════════════════════════════════════════════════════════════════════════════╗\n";
         std::cout << " ║                                  TOKEN TABLE                                  ║\n";

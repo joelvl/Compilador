@@ -228,7 +228,7 @@ break {
     return BREAK;
 }
 
-New {
+new|New {
     printToken(yylineno, yyleng, "NEW", strdup(yytext));
     return NEW;
 }

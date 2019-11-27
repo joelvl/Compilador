@@ -1,0 +1,68 @@
+interface Printable {
+    void print();
+}
+
+class Person implements Printable {
+    int id;
+    string name;
+    int age;
+    bool active;
+
+    void print(){
+        Print("Name:\n    ", name, "Age:\n    ", age);
+    }
+
+    int getAge(){
+        return this.age;
+    }
+
+    string getName(){
+        return this.name;
+    }
+
+    bool isActive(){
+        return this.active;
+    }
+
+    Person qwer(Printable asd){
+        return null;
+    }
+}
+
+class Course {
+    int id;
+
+    class Topic {
+        string name;
+    }
+}
+
+int main(){
+
+    return 1;
+}
+
+class Student extends Person implements Printable {
+    int grade;
+    int abc;
+
+    void main(string[] args){
+        Student std;
+        Person prs;
+        
+        string abc;
+
+        abc = "ABC";
+
+        prs = std;
+        std = null;
+
+        prs.qwer(std);
+
+        while (isActive() || active){
+            for (grade; std.isActive(); grade){
+                break;
+            }
+        }
+    }
+}

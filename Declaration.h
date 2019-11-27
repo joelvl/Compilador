@@ -81,6 +81,6 @@ public:
     Interface_Declaration(std::string identifier);
     virtual void addProtype(Function_Declaration* prototype);
     bool hasPrototype(std::string identifier, Type_Node* returnType, std::vector<Type_Node*> parameterTypes);
-    bool validDerivedClass(std::vector<Function_Declaration*> declaredFunctions);
+    bool validDerivedClass(Class_Declaration* clazz);
 };
 #endif

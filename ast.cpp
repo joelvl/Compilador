@@ -964,11 +964,6 @@ bool Type_Node::convertible(Type_Node ntype)
     Type_Node *atype = this;
     Type_Node *btype = &ntype;
 
-    if (atype->identifier && btype->identifier){
-        for (Type_Node *ttype : atype->implemented){
-            std::cout << atype->toString() << "    " << ttype->identifier->identifier << "  =?  " << btype->identifier->identifier << std::endl;
-        }
-    }   
     if (atype->type == btype->type && atype->isArray() == btype->isArray())
     {
         if (atype->type == Datatype::identifier_type)

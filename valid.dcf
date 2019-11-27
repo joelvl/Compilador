@@ -23,10 +23,6 @@ class Person implements Printable {
     bool isActive(){
         return this.active;
     }
-
-    Person qwer(Printable asd){
-        return null;
-    }
 }
 
 class Course {
@@ -56,8 +52,6 @@ class Student extends Person implements Printable {
 
         prs = std;
         std = null;
-
-        prs.qwer(std);
 
         while (isActive() || active){
             for (grade; std.isActive(); grade){
